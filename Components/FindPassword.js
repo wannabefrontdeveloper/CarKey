@@ -7,9 +7,11 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native'; // useNavigation을 import 합니다.
 
 const FindPassword = () => {
   const [email, setEmail] = useState('');
+  const navigation = useNavigation(); // useNavigation을 사용하여 navigation 객체를 가져옵니다.
 
   const isEmailValid = email => {
     // 이메일 형식을 검증하는 정규식
@@ -31,6 +33,9 @@ const FindPassword = () => {
     }
     // 이메일이 올바른 경우에만 비밀번호 찾기 로직을 실행
     console.log(email);
+
+    // ChangePassword 화면으로 이동
+    navigation.navigate('ChangePassword');
   };
 
   return (
@@ -67,7 +72,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 50,
+    marginBottom: 30,
     fontSize: 45,
     fontWeight: '600',
     color: '#000',
