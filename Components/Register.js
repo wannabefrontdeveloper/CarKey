@@ -20,7 +20,6 @@ const Register = ({navigation}) => {
   const [emailCheckButtonText, setEmailCheckButtonText] = useState('중복 확인');
   const [nicknameCheckButtonText, setNicknameCheckButtonText] =
     useState('중복 확인');
-
   const handleSignUp = () => {
     // 이메일 또는 닉네임 중 하나라도 중복 확인을 하지 않은 경우
     if (!isEmailChecked || !isNicknameChecked) {
@@ -52,6 +51,9 @@ const Register = ({navigation}) => {
     }
 
     // 여기서부터는 회원가입 처리 로직을 추가할 수 있습니다.
+
+    // 회원가입이 완료되었음을 알리는 알림창을 띄웁니다.
+    Alert.alert('회원가입 완료', 'CarKey에 오신것을 환영합니다!');
   };
 
   const handleSignIn = () => {
