@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   guestButton: {
     width: '100%',
     height: 50,
-    backgroundColor: 'transparent',
+    backgroundColor: '#d3d3d4f4',
     borderColor: '#007bff',
     borderWidth: 1,
     justifyContent: 'center',
