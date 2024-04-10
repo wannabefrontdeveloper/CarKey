@@ -5,6 +5,7 @@ import Start from './Components/Start';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import FindPassword from './Components/FindPassword'; // FindPassword 컴포넌트를 import 합니다.
+import ChangePassword from './Components/ChangePassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,12 @@ const App = () => {
         <Stack.Screen
           name="FindPassword" // 새로 추가된 FindPassword 화면을 설정합니다.
           component={FindPassword}
-          options={{title: '패스워드 찾기'}} // 헤더에 타이틀을 설정합니다.
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePassword}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>
