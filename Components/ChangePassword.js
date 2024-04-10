@@ -7,10 +7,12 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const ChangePasswordScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigation = useNavigation();
 
   const handlePasswordChange = text => {
     setPassword(text);
@@ -45,7 +47,17 @@ const ChangePasswordScreen = () => {
 
     // 비밀번호 변경 로직을 구현합니다.
     // 여기에 비밀번호 변경에 대한 실제 로직을 추가합니다.
-    alert('비밀번호가 변경되었습니다.');
+    Alert.alert(
+      '비밀번호 변경 성공!',
+      '새로운 비밀번호로 로그인해주세요!',
+      [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Login'), // Login.js 화면으로 이동
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   return (
