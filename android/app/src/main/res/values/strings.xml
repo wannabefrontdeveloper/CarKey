@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CarKey</string>
+     <string name="permission_camera">Allow $(CarKey) to access your camera?</string>
 </resources>

@@ -1,3 +1,5 @@
+// Login.js
+
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -11,11 +13,18 @@ import {
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const handleGuestLogin = () => {
-    console.log('비회원으로 로그인');
+    navigation.navigate('Board'); // 비회원 버튼을 누를 때 Board 화면으로 이동
   };
+
   const handleForgotPassword = () => {
-    navigation.navigate('FindPassword'); // "패스워드를 잊으셨나요?" 를 눌렀을 때 FindPassword 화면으로 이동합니다.
+    navigation.navigate('FindPassword'); // "패스워드를 잊으셨나요?" 를 눌렀을 때 FindPassword 화면으로 이동
+  };
+
+  const onLogin = () => {
+    // 아이디와 비밀번호가 비어있을 때에도 임시로 로그인 성공으로 처리
+    navigation.navigate('Board');
   };
 
   return (
@@ -39,9 +48,7 @@ const Login = ({navigation}) => {
         placeholderTextColor="#A9A9A9"
         autoCapitalize="none"
       />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => onLogin(email, password)}>
+      <TouchableOpacity style={styles.button} onPress={onLogin}>
         <Text style={styles.buttonText}>로그인</Text>
       </TouchableOpacity>
       <TouchableOpacity

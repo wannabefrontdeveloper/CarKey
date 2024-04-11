@@ -53,7 +53,9 @@ const Register = ({navigation}) => {
     // 여기서부터는 회원가입 처리 로직을 추가할 수 있습니다.
 
     // 회원가입이 완료되었음을 알리는 알림창을 띄웁니다.
-    Alert.alert('회원가입 완료', 'CarKey에 오신것을 환영합니다!');
+    Alert.alert('회원가입 완료', 'CarKey에 오신것을 환영합니다!', [
+      {text: '확인', onPress: () => navigation.navigate('Board')},
+    ]);
   };
 
   const handleSignIn = () => {
