@@ -34,7 +34,17 @@ const FeedbackScreen = () => {
 
   const navigateToMyPage = () => {
     navigation.navigate('MyPage');
-    // 팝업 메시지 표시
+  };
+
+  const navigateToFinishFeedback = () => {
+    if (!title || !feedback || !image) {
+      Alert.alert(
+        '입력 필요',
+        '제목, 사진 첨부, 의견 및 피드백을 모두 입력해주세요.',
+      );
+      return;
+    }
+    navigation.navigate('MyPage');
     Alert.alert('의견 감사합니다!', '신속히 읽고 반영하겠습니다!');
   };
 
@@ -63,13 +73,15 @@ const FeedbackScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View>
             <View style={styles.navbar}>
-              <TouchableOpacity style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={navigateToMyPage}>
                 <Icon name="arrow-back" size={30} color="#ffffff" />
               </TouchableOpacity>
               <Text style={styles.navbarText}>의견 및 피드백</Text>
               <TouchableOpacity
                 style={styles.iconContainer}
-                onPress={navigateToMyPage}>
+                onPress={navigateToFinishFeedback}>
                 <Icon name="create" size={30} color="#ffffff" />
               </TouchableOpacity>
             </View>
