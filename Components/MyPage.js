@@ -25,6 +25,10 @@ const MyPage = () => {
     navigation.navigate('Feedback');
   };
 
+  const navigateToDamageReportViewer = () => {
+    navigation.navigate('DamageReportViewer');
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -78,7 +82,9 @@ const MyPage = () => {
         <View style={styles.divider} />
 
         <View style={styles.menuItem}>
-          <Text style={styles.label}>분석 내역 조회</Text>
+          <TouchableOpacity onPress={navigateToDamageReportViewer}>
+            <Text style={styles.label}>분석 내역 조회</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
