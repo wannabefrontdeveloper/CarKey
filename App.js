@@ -7,9 +7,11 @@ import Register from './Components/Register';
 import FindPassword from './Components/FindPassword';
 import ChangePassword from './Components/ChangePassword';
 import Board from './Components/Board';
-import BestBoard from './Components/BestBoard'; // BestBoard를 import 합니다.
+import BestBoard from './Components/BestBoard';
 import MyPage from './Components/MyPage';
 import MyWritePage from './Components/MyWritePage';
+import Feedback from './Components/Feedback';
+import ImageFullScreen from './Components/ImageFullScreen'; // ImageFullScreen을 import 합니다.
 
 const Stack = createNativeStackNavigator();
 
@@ -48,7 +50,7 @@ const App = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="BestBoard" // BestBoard 화면을 추가합니다.
+          name="BestBoard"
           component={BestBoard}
           options={{headerShown: false}}
         />
@@ -57,10 +59,20 @@ const App = () => {
           component={MyPage}
           options={{headerShown: false}}
         />
-
         <Stack.Screen
           name="MyWritePage"
           component={MyWritePage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Feedback"
+          component={Feedback}
+          options={{headerShown: false}}
+        />
+        {/* ImageFullScreen 화면을 추가합니다. */}
+        <Stack.Screen
+          name="ImageFullScreen"
+          component={ImageFullScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
