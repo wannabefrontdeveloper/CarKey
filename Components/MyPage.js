@@ -10,10 +10,18 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
+// MyWritePage import 추가
+import MyWritePage from './MyWritePage';
+
 const MyPage = () => {
   const navigation = useNavigation();
   const navigateToBoard = () => {
     navigation.navigate('Board');
+  };
+
+  // 내가 쓴 글 메뉴를 눌렀을 때 내비게이션 설정
+  const navigateToMyWritePage = () => {
+    navigation.navigate('MyWritePage');
   };
 
   const handleCameraPress = () => {
@@ -61,7 +69,9 @@ const MyPage = () => {
         <View style={styles.divider} />
 
         <View style={styles.menuItem}>
-          <Text style={styles.label}>내가 쓴 글</Text>
+          <TouchableOpacity onPress={navigateToMyWritePage}>
+            <Text style={styles.label}>내가 쓴 글</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
