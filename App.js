@@ -9,6 +9,7 @@ import ChangePassword from './Components/ChangePassword';
 import Board from './Components/Board';
 import BestBoard from './Components/BestBoard'; // BestBoard를 import 합니다.
 import MyPage from './Components/MyPage';
+import MyWritePage from './Components/MyWritePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,12 @@ const App = () => {
         <Stack.Screen
           name="MyPage"
           component={MyPage}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="MyWritePage"
+          component={MyWritePage}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
