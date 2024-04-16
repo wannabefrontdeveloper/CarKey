@@ -13,6 +13,7 @@ import MyWritePage from './Components/MyWritePage';
 import Feedback from './Components/Feedback';
 import ImageFullScreen from './Components/ImageFullScreen'; // ImageFullScreen을 import 합니다.
 import DamageReportViewer from './Components/DamageReportViewer';
+import NewPost from './Components/NewPost';
 
 const Stack = createNativeStackNavigator();
 
@@ -79,6 +80,11 @@ const App = () => {
         <Stack.Screen
           name="DamageReportViewer"
           component={DamageReportViewer}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="NewPost"
+          component={NewPost}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
