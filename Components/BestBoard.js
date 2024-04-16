@@ -117,6 +117,10 @@ const Board = () => {
     navigation.navigate('MyPage');
   };
 
+  const navigateToNewPost = () => {
+    navigation.navigate('NewPost');
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -189,7 +193,9 @@ const Board = () => {
           <Icon name="settings" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>베스트 게시판</Text>
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={navigateToNewPost}>
           <Icon name="create" size={30} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -276,7 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15, // 좌우 padding 추가
     paddingVertical: 8, // 상하 padding 추가
     marginHorizontal: 1, // 좌우 margin 추가
-    backgroundColor: '#4d91da',
+    backgroundColor: '#8fa1b4',
     borderRadius: 5,
     alignItems: 'center',
   },

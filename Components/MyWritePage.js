@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15, // 좌우 padding 추가
     paddingVertical: 8, // 상하 padding 추가
     marginHorizontal: 1, // 좌우 margin 추가
-    backgroundColor: '#4d91da',
+    backgroundColor: '#8fa1b4',
     borderRadius: 5,
     alignItems: 'center',
   },

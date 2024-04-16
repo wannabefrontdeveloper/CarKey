@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,33 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  BackHandler,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
 const Board = () => {
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('경고!', '앱을 종료하시겠습니까?', [
+        {
+          text: '아니요',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: '네', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
@@ -117,6 +139,10 @@ const Board = () => {
     navigation.navigate('MyPage');
   };
 
+  const navigateToNewPost = () => {
+    navigation.navigate('NewPost');
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -189,7 +215,9 @@ const Board = () => {
           <Icon name="settings" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>게시판</Text>
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={navigateToNewPost}>
           <Icon name="create" size={30} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -276,7 +304,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15, // 좌우 padding 추가
     paddingVertical: 8, // 상하 padding 추가
     marginHorizontal: 1, // 좌우 margin 추가
-    backgroundColor: '#4d91da',
+    backgroundColor: '#8fa1b4',
     borderRadius: 5,
     alignItems: 'center',
   },

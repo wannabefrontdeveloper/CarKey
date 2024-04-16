@@ -82,7 +82,7 @@ const FeedbackScreen = () => {
               <TouchableOpacity
                 style={styles.iconContainer}
                 onPress={navigateToFinishFeedback}>
-                <Icon name="create" size={30} color="#ffffff" />
+                <Icon name="check" size={30} color="#ffffff" />
               </TouchableOpacity>
             </View>
 
