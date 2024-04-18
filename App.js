@@ -14,6 +14,7 @@ import Feedback from './Components/Feedback';
 import ImageFullScreen from './Components/ImageFullScreen'; // ImageFullScreen을 import 합니다.
 import DamageReportViewer from './Components/DamageReportViewer';
 import NewPost from './Components/NewPost';
+import Fixing from './Components/Fixing';
 
 const Stack = createNativeStackNavigator();
 
@@ -85,6 +86,11 @@ const App = () => {
         <Stack.Screen
           name="NewPost"
           component={NewPost}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Fixing"
+          component={Fixing}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

@@ -29,6 +29,10 @@ const MyPage = () => {
     navigation.navigate('DamageReportViewer');
   };
 
+  const navigateToFixing = () => {
+    navigation.navigate('Fixing');
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -68,7 +72,9 @@ const MyPage = () => {
         <View style={styles.divider} />
 
         <View style={styles.menuItem}>
-          <Text style={styles.label}>내 정보 수정</Text>
+          <TouchableOpacity onPress={navigateToFixing}>
+            <Text style={styles.label}>내 정보 수정</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
