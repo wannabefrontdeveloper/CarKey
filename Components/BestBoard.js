@@ -130,14 +130,13 @@ const Board = () => {
         {
           text: '촬영하기',
           onPress: () => {
-            // 카메라를 실행하는 로직
+            navigation.navigate('CameraScreen');
           },
         },
       ],
       {cancelable: true}, // Alert 외부를 터치해도 Alert가 닫히도록 설정
     );
   };
-
   const ListItem = ({username, date, text}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(date);

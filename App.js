@@ -15,6 +15,8 @@ import ImageFullScreen from './Components/ImageFullScreen'; // ImageFullScreenì
 import DamageReportViewer from './Components/DamageReportViewer';
 import NewPost from './Components/NewPost';
 import Fixing from './Components/Fixing';
+import CameraScreen from './Components/CameraScreen';
+import {Camera} from 'react-native-vision-camera';
 
 const Stack = createNativeStackNavigator();
 
@@ -91,6 +93,11 @@ const App = () => {
         <Stack.Screen
           name="Fixing"
           component={Fixing}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="CameraScreen"
+          component={CameraScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

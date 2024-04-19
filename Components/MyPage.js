@@ -42,7 +42,7 @@ const MyPage = () => {
         {
           text: '촬영하기',
           onPress: () => {
-            // 카메라를 실행하는 로직
+            navigation.navigate('CameraScreen');
           },
         },
       ],
