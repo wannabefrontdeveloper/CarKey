@@ -20,7 +20,8 @@ const CameraScreen = ({navigation}) => {
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
   const [audioPermissionGranted, setAudioPermissionGranted] = useState(false);
   const [currentDeviceIndex, setCurrentDeviceIndex] = useState(0);
-  const devices = useCameraDevices(); // 사용 가능한 카메라 디바이스 목록
+  const devices = useCameraDevices();
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -42,6 +43,7 @@ const CameraScreen = ({navigation}) => {
         console.error('권한 요청 중 오류 발생:', error);
       }
     };
+
     const checkPermission = async () => {
       const cameraPermission = await Camera.getCameraPermissionStatus();
 
@@ -85,11 +87,23 @@ const CameraScreen = ({navigation}) => {
 
   const takePicture = async () => {
     if (cameraRef.current && isCameraReady) {
-      const photo = await cameraRef.current.takePhoto({
-        quality: 'high',
-      });
-      console.log('Photo taken:', photo);
+      try {
+        const photo = await cameraRef.current.takePhoto({
+          quality: 'high',
+          width: 256,
+          height: 256,
+        });
+        console.log('Photo taken:', photo);
+        setCapturedPhoto(photo); // 촬영된 사진 데이터를 상태에 저장
+        navigateToAnalysisFirst(photo); // 촬영 후 AnalysisFirst 화면으로 이동
+      } catch (error) {
+        console.error('사진 촬영 중 오류 발생:', error);
+      }
     }
+  };
+
+  const navigateToAnalysisFirst = photo => {
+    navigation.navigate('AnalysisFirst', {photo});
   };
 
   if (!cameraPermissionGranted || !audioPermissionGranted) {
@@ -140,20 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
   },
-  navbar: {
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#4d91da',
-    paddingHorizontal: 10,
-  },
-  navbarText: {
-    color: '#ffffff',
-    fontSize: 35,
-    fontWeight: 'bold',
-    marginRight: 230,
-  },
   errorText: {
     color: 'red',
     fontSize: 18,
@@ -162,13 +162,12 @@ const styles = StyleSheet.create({
   },
   yellowFrame: {
     position: 'absolute',
-    top: '50%', // 테두리의 상단을 화면의 세로 중앙으로 조정합니다.
-    left: '50%', // 테두리의 왼쪽을 화면의 가로 중앙으로 조정합니다.
-    transform: [{translateX: -128}, {translateY: -128}], // 테두리를 가운데로 이동시킵니다.
+    top: '50%',
+    left: '50%',
+    transform: [{translateX: -128}, {translateY: -128}],
     width: 256,
     height: 256,
     borderRadius: 10,
-    // overflow: 'hidden', // 이 줄은 삭제합니다.
   },
   yellowFrameBorder: {
     flex: 1,
@@ -177,32 +176,22 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     position: 'absolute',
-    top: '50%', // 텍스트의 상단을 화면의 세로 중앙으로 조정합니다.
-    left: '50%', // 텍스트의 왼쪽을 화면의 가로 중앙으로 조정합니다.
-    textAlign: 'center', // 텍스트를 가운데 정렬합니다.
+    top: '50%',
+    left: '50%',
+    textAlign: 'center',
     color: 'white',
     fontSize: 20,
     marginLeft: -121,
-    marginTop: -160, // 텍스트를 왼쪽으로 이동하여 테두리 외부에 위치시킵니다.
-    backgroundColor: '#0d0d0e', // 텍스트의 배경색을 설정합니다.
+    marginTop: -160,
+    backgroundColor: '#0d0d0e',
   },
   button: {},
-
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
     backgroundColor: '#4d91da',
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-  },
-  tabText: {
-    color: '#fff',
-    fontSize: 20,
   },
 });
 

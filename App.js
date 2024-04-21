@@ -16,7 +16,12 @@ import DamageReportViewer from './Components/DamageReportViewer';
 import NewPost from './Components/NewPost';
 import Fixing from './Components/Fixing';
 import CameraScreen from './Components/CameraScreen';
-import {Camera} from 'react-native-vision-camera';
+import AnalysisFirst from './Components/AnalysisFirst';
+import Loading from './Components/Loading';
+import Setting from './Components/Setting';
+import ScratchAnalysis from './Components/ScratchAnalysis';
+import DentAnalysis from './Components/DentAnalysis';
+import DetailScreen from './Components/DetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -98,6 +103,36 @@ const App = () => {
         <Stack.Screen
           name="CameraScreen"
           component={CameraScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AnalysisFirst"
+          component={AnalysisFirst}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Loading"
+          component={Loading}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ScratchAnalysis"
+          component={ScratchAnalysis}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Setting"
+          component={Setting}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="DentAnalysis"
+          component={DentAnalysis}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="DetailScreen"
+          component={DetailScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

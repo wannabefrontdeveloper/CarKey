@@ -143,6 +143,14 @@ const Board = () => {
     navigation.navigate('NewPost');
   };
 
+  const navigateToSetting = () => {
+    navigation.navigate('Setting');
+  };
+  const navigateToDetail = () => {
+    // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
+    navigation.navigate('DetailScreen', {username, date, text});
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -174,14 +182,21 @@ const Board = () => {
     // 날짜와 시간을 문자열로 조합하여 포맷팅
     const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}`;
 
+    const navigateToDetail = () => {
+      // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
+      navigation.navigate('DetailScreen', {username, date, text});
+    };
+
     return (
-      <View style={styles.listItem}>
-        <Text style={styles.listItemText}>{text}</Text>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.listItemUsername}>{username}</Text>
-          <Text style={styles.listItemDate}>{formattedDate}</Text>
+      <TouchableOpacity onPress={navigateToDetail}>
+        <View style={styles.listItem}>
+          <Text style={styles.listItemText}>{text}</Text>
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.listItemUsername}>{username}</Text>
+            <Text style={styles.listItemDate}>{formattedDate}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -211,7 +226,9 @@ const Board = () => {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={navigateToSetting}>
           <Icon name="settings" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>게시판</Text>

@@ -33,6 +33,10 @@ const MyPage = () => {
     navigation.navigate('Fixing');
   };
 
+  const navigateToSetting = () => {
+    navigation.navigate('Setting');
+  };
+
   const handleCameraPress = () => {
     Alert.alert(
       '알림',
@@ -49,6 +53,27 @@ const MyPage = () => {
       {cancelable: true}, // Alert 외부를 터치해도 Alert가 닫히도록 설정
     );
   };
+
+  const handleLogoutPress = () => {
+    Alert.alert(
+      '로그아웃',
+      '로그아웃하시겠어요?',
+      [
+        {text: '취소', style: 'cancel'},
+        {
+          text: '확인',
+          onPress: () => {
+            // 여기에 로그아웃 처리 코드를 추가합니다.
+            console.log('로그아웃 되었습니다.');
+            // 로그아웃 후 로그인 화면으로 이동합니다.
+            navigation.navigate('Login');
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -96,7 +121,9 @@ const MyPage = () => {
         <View style={styles.divider} />
 
         <View style={styles.menuItem}>
-          <Text style={styles.label}>설정</Text>
+          <TouchableOpacity onPress={navigateToSetting}>
+            <Text style={styles.label}>설정</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
@@ -110,7 +137,9 @@ const MyPage = () => {
         <View style={styles.divider} />
 
         <View style={styles.menuItem}>
-          <Text style={styles.label}>로그아웃</Text>
+          <TouchableOpacity onPress={handleLogoutPress}>
+            <Text style={styles.label}>로그아웃</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
