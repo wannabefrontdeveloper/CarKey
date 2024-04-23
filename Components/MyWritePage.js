@@ -81,6 +81,10 @@ const Board = () => {
   const navigateToMyPage = () => {
     navigation.navigate('MyPage');
   };
+  const navigateToDetail = () => {
+    // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
+    navigation.navigate('DetailScreen', {username, date, text});
+  };
 
   const ListItem = ({username, date, text}) => {
     // date를 JavaScript Date 객체로 파싱
@@ -96,14 +100,21 @@ const Board = () => {
     // 날짜와 시간을 문자열로 조합하여 포맷팅
     const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}`;
 
+    const navigateToDetail = () => {
+      // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
+      navigation.navigate('DetailScreen', {username, date, text});
+    };
+
     return (
-      <View style={styles.listItem}>
-        <Text style={styles.listItemText}>{text}</Text>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.listItemUsername}>{username}</Text>
-          <Text style={styles.listItemDate}>{formattedDate}</Text>
+      <TouchableOpacity onPress={navigateToDetail}>
+        <View style={styles.listItem}>
+          <Text style={styles.listItemText}>{text}</Text>
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.listItemUsername}>{username}</Text>
+            <Text style={styles.listItemDate}>{formattedDate}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

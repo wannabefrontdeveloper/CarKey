@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
-const Board = () => {
+const BestBoard = () => {
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
@@ -20,85 +20,113 @@ const Board = () => {
       id: '1',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '어떻게든 찾아낸다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '2',
       username: '이규동',
       date: '2024-04-11',
-      text: '백엔드 개하기 싫다',
+      title: '누가 긁고 갔음',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '3',
       username: '김지원',
       date: '2024-04-10',
-      text: 'ViSCA BARCA',
+      title: 'ViSCA BARCA',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '4',
       username: '송지우',
       date: '2024-04-10',
-      text: '이병문 자퇴해라',
+      title: '이병문 자퇴해라',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '5',
       username: '김지원',
       date: '2024-04-10',
-      text: '오늘 기아 승 있냐?',
+      title: '오늘 기아 승 있냐?',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '6',
       username: '김선호',
       date: '2024-04-10',
-      text: '기아 화이팅~~~~',
+      title: '기아 화이팅~~~~',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '7',
       username: '김준희',
       date: '2024-04-10',
-      text: '기아 화이팅~~',
+      title: '기아 화이팅~~',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '8',
       username: '신동민',
       date: '2024-04-10',
-      text: 'AI 개빡세다',
+      title: 'AI 개빡세다',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '9',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '10',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '11',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '12',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '13',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
     {
       id: '14',
       username: 'giwonk',
       date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
+      title: '누가 긁고 갔네요.. 하',
+      text: '찾아내면 죽는다',
+      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
     },
   ];
 
@@ -109,12 +137,8 @@ const Board = () => {
     return items.slice(startIndex, endIndex);
   };
 
-  const navigateToBoard = () => {
-    navigation.navigate('Board');
-  };
-
-  const navigateToSetting = () => {
-    navigation.navigate('Setting');
+  const navigateToBestBoard = () => {
+    navigation.navigate('BestBoard');
   };
 
   const navigateToMyPage = () => {
@@ -124,9 +148,18 @@ const Board = () => {
   const navigateToNewPost = () => {
     navigation.navigate('NewPost');
   };
+
+  const navigateToSetting = () => {
+    navigation.navigate('Setting');
+  };
+
+  const navigateToBoard = () => {
+    navigation.navigate('Board');
+  };
+
   const navigateToDetail = () => {
     // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {username, date, text});
+    navigation.navigate('DetailScreen', {username, date, title, text, picture});
   };
 
   const handleCameraPress = () => {
@@ -145,7 +178,8 @@ const Board = () => {
       {cancelable: true}, // Alert 외부를 터치해도 Alert가 닫히도록 설정
     );
   };
-  const ListItem = ({username, date, text}) => {
+
+  const ListItem = ({username, date, title, text, picture}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(date);
 
@@ -161,13 +195,19 @@ const Board = () => {
 
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-      navigation.navigate('DetailScreen', {username, date, text});
+      navigation.navigate('DetailScreen', {
+        username,
+        date,
+        text,
+        title,
+        picture,
+      });
     };
 
     return (
       <TouchableOpacity onPress={navigateToDetail}>
         <View style={styles.listItem}>
-          <Text style={styles.listItemText}>{text}</Text>
+          <Text style={styles.listItemTitle}>{title}</Text>
           <View style={styles.userInfoContainer}>
             <Text style={styles.listItemUsername}>{username}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
@@ -221,7 +261,9 @@ const Board = () => {
           <ListItem
             username={item.username}
             date={item.date}
+            title={item.title} // title 전달
             text={item.text}
+            picture={item.picture} // picture 전달
           />
         )}
         keyExtractor={item => item.id}
@@ -294,6 +336,9 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     alignItems: 'flex-end',
   },
+  listItemTitle: {
+    fontSize: 25,
+  },
   pageButton: {
     paddingHorizontal: 15, // 좌우 padding 추가
     paddingVertical: 8, // 상하 padding 추가
@@ -314,6 +359,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // 페이지 버튼들을 수평으로 중앙 정렬하기 위해 추가
     marginVertical: 20, // 상하 여백 추가
   },
+  picture: {
+    width: 50,
+    height: 50,
+    marginLeft: 10,
+  },
 });
 
-export default Board;
+export default BestBoard;

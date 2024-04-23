@@ -17,6 +17,10 @@ const Setting = () => {
     navigation.navigate('MyPage');
   };
 
+  const navigateToPreviousScreen = () => {
+    navigation.goBack();
+  };
+
   const handleAppInfoPress = () => {
     Alert.alert(
       '어플리케이션 정보',
@@ -57,7 +61,7 @@ const Setting = () => {
               name="arrow-back"
               size={30}
               color="white"
-              onPress={navigateToMyPage}
+              onPress={navigateToPreviousScreen}
             />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>설정</Text>
