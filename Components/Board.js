@@ -45,7 +45,7 @@ const Board = () => {
       date: '2024-04-10',
       title: '누가 긁고 갔네요.. 하',
       text: '어떻게든 찾아낸다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
+      picture: require('../assets/Dent.png'), // 예시 이미지 경로
     },
     {
       id: '2',
@@ -210,7 +210,7 @@ const Board = () => {
     const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
 
     // 날짜와 시간을 문자열로 조합하여 포맷팅
-    const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}`;
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
 
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.

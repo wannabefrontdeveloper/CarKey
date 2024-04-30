@@ -22,14 +22,20 @@ const DetailScreen = ({route}) => {
   const {title, username, date, text, picture} = route.params;
   console.log('Picture:', picture);
   console.log('username:', username);
+
+  // date에서 시간 정보 분리
+  const dateObj = new Date(date);
+  const dateString = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+  const timeString = `${dateObj
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+
   const navigation = useNavigation();
   const [recommendCount, setRecommendCount] = useState(0); // 추천 수 상태 추가
-
   const scrollViewRef = useRef(null); // ScrollView에 대한 ref 생성
-
-  const navigateToBoard = () => {
-    navigation.navigate('Board');
-  };
 
   const navigateToPreviousScreen = () => {
     navigation.goBack();
@@ -97,9 +103,10 @@ const DetailScreen = ({route}) => {
             placeholderTextColor="#0e0d0d"
             editable={false}
           />
+          {/* 시간까지 표시되도록 수정 */}
           <TextInput
             style={styles.input}
-            placeholder={`작성 날짜: ${date}`}
+            placeholder={`작성 시간: ${dateString} ${timeString}`}
             autoCapitalize="none"
             placeholderTextColor="#0e0d0d"
             editable={false}
@@ -163,7 +170,6 @@ const DetailScreen = ({route}) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
