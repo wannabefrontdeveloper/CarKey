@@ -129,7 +129,7 @@ const DetailScreen = ({route}) => {
             style={styles.recommendButton}
             onPress={handleRecommend}>
             <Text style={styles.recommendButtonText}>
-              👍 추천하기 ({recommendCount})
+              유용한 정보였다면 터치! 👍 ({recommendCount})
             </Text>
           </TouchableOpacity>
           <Text style={styles.Comment}>댓글</Text>
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4d91da',
     position: 'absolute',
     bottom: 250,
-    right: 130,
+    right: 90,
     paddingVertical: 18,
     paddingHorizontal: 20,
     borderRadius: 8,

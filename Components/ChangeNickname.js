@@ -7,56 +7,51 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native'; // useNavigation을 import 합니다.
+import {useNavigation} from '@react-navigation/native';
 
-const FindPassword = () => {
-  const [email, setEmail] = useState('');
-  const navigation = useNavigation(); // useNavigation을 사용하여 navigation 객체를 가져옵니다.
+const ChangeNickname = () => {
+  const [nickname, setNickname] = useState('');
+  const navigation = useNavigation();
 
-  const isEmailValid = email => {
-    // 이메일 형식을 검증하는 정규식
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const handleNicknameChange = text => {
+    // 특수 문자나 공백이 있는지 검사하는 정규식
+    const regex = /^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$/;
+
+    // 닉네임이 6글자를 초과하는 경우 알림 표시
+    if (text.length > 6) {
+      Alert.alert('알림', '닉네임은 최대 6글자입니다');
+    } else if (!regex.test(text)) {
+      // 특수 문자나 공백이 있는 경우 알림 표시
+      Alert.alert('알림', '닉네임에 특수 문자 및 공백은 사용할 수 없습니다');
+    } else {
+      // 조건에 부합하면 닉네임 업데이트
+      setNickname(text);
+    }
   };
 
-  const handleFindPassword = () => {
-    const containsCom = email.includes('.com');
-    const containsNet = email.includes('.net');
-
-    if (
-      !isEmailValid(email) ||
-      (containsCom && containsNet) ||
-      (!containsCom && !containsNet)
-    ) {
-      Alert.alert('경고', '올바르지 않은 이메일 형식입니다.');
-      return;
-    }
-    // 이메일이 올바른 경우에만 비밀번호 찾기 로직을 실행
-    console.log(email);
-
-    // ChangePassword 화면으로 이동
-    navigation.navigate('ChangePassword');
+  const handleNicknameUpdate = () => {
+    // 닉네임 업데이트 성공 알림
+    Alert.alert('알림', '닉네임이 성공적으로 변경되었습니다!', [
+      {text: '확인', onPress: () => navigation.navigate('Fixing')},
+    ]);
   };
 
   return (
     <View style={styles.container}>
-      {/* 뒤로 가기 버튼 (기능은 구현해야 함) */}
       <TouchableOpacity onPress={() => console.log('뒤로 가기')}>
-        <Text style={styles.backButton}>{`이메일을 입력해주세요`}</Text>
+        <Text style={styles.backButton}>{`새로운 닉네임을 입력해주세요`}</Text>
       </TouchableOpacity>
 
-      {/* 이메일 입력 필드 */}
       <TextInput
         style={styles.input}
-        onChangeText={setEmail}
-        value={email}
+        onChangeText={handleNicknameChange}
+        value={nickname}
         placeholder=""
         keyboardType="email-address"
         autoCapitalize="none"
       />
 
-      {/* 확인 버튼 */}
-      <TouchableOpacity style={styles.button} onPress={handleFindPassword}>
+      <TouchableOpacity style={styles.button} onPress={handleNicknameUpdate}>
         <Text style={styles.buttonText}>완료</Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -78,7 +73,7 @@ const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'flex-start',
     marginBottom: 30,
-    fontSize: 45,
+    fontSize: 38,
     fontWeight: '600',
     color: '#000',
   },
@@ -116,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FindPassword;
+export default ChangeNickname;

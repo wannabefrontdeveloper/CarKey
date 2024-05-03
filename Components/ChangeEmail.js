@@ -7,14 +7,13 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native'; // useNavigation을 import 합니다.
+import {useNavigation} from '@react-navigation/native';
 
-const FindPassword = () => {
+const ChangeEmail = () => {
   const [email, setEmail] = useState('');
-  const navigation = useNavigation(); // useNavigation을 사용하여 navigation 객체를 가져옵니다.
+  const navigation = useNavigation();
 
   const isEmailValid = email => {
-    // 이메일 형식을 검증하는 정규식
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -31,21 +30,26 @@ const FindPassword = () => {
       Alert.alert('경고', '올바르지 않은 이메일 형식입니다.');
       return;
     }
-    // 이메일이 올바른 경우에만 비밀번호 찾기 로직을 실행
-    console.log(email);
 
-    // ChangePassword 화면으로 이동
-    navigation.navigate('ChangePassword');
+    // 이메일 변경이 성공적으로 완료되었음을 알림
+    Alert.alert('성공', '이메일 변경이 성공적으로 완료되었습니다.', [
+      {
+        text: '확인',
+        onPress: () => navigation.navigate('Fixing'),
+      },
+    ]);
+  };
+
+  const navigateToFixing = () => {
+    navigation.navigate('Fixing');
   };
 
   return (
     <View style={styles.container}>
-      {/* 뒤로 가기 버튼 (기능은 구현해야 함) */}
       <TouchableOpacity onPress={() => console.log('뒤로 가기')}>
-        <Text style={styles.backButton}>{`이메일을 입력해주세요`}</Text>
+        <Text style={styles.backButton}>{`새로운 이메일을 입력해주세요`}</Text>
       </TouchableOpacity>
 
-      {/* 이메일 입력 필드 */}
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
@@ -55,7 +59,6 @@ const FindPassword = () => {
         autoCapitalize="none"
       />
 
-      {/* 확인 버튼 */}
       <TouchableOpacity style={styles.button} onPress={handleFindPassword}>
         <Text style={styles.buttonText}>완료</Text>
       </TouchableOpacity>
@@ -78,7 +81,7 @@ const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'flex-start',
     marginBottom: 30,
-    fontSize: 45,
+    fontSize: 38,
     fontWeight: '600',
     color: '#000',
   },
@@ -116,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FindPassword;
+export default ChangeEmail;

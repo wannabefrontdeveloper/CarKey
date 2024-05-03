@@ -24,6 +24,8 @@ import DentAnalysis from './Components/DentAnalysis';
 import DetailScreen from './Components/DetailScreen';
 import MoneyAnalysis from './Components/MoneyAnalysis';
 import {PhotoProvider} from './Components/PhotoContext';
+import ChangeEmail from './Components/ChangeEmail';
+import ChangeNickname from './Components/ChangeNickname';
 
 const Stack = createNativeStackNavigator();
 
@@ -141,6 +143,16 @@ const App = () => {
           <Stack.Screen
             name="MoneyAnalysis"
             component={MoneyAnalysis}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ChangeEmail"
+            component={ChangeEmail}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ChangeNickname"
+            component={ChangeNickname}
             options={{headerShown: false}}
           />
         </Stack.Navigator>

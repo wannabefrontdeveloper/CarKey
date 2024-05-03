@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import axios from 'axios'; // axios 라이브러리를 가져옵니다.
 
 const Register = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -50,12 +51,22 @@ const Register = ({navigation}) => {
       return; // 함수 실행 중단
     }
 
-    // 여기서부터는 회원가입 처리 로직을 추가할 수 있습니다.
-
-    // 회원가입이 완료되었음을 알리는 알림창을 띄웁니다.
-    Alert.alert('회원가입 완료', 'CarKey에 오신것을 환영합니다!', [
-      {text: '확인', onPress: () => navigation.navigate('Board')},
-    ]);
+    axios
+      .post('http://localhost:8080/user/signup', {
+        loginId: email,
+        password: password,
+        nickName: nickname,
+      })
+      .then(response => {
+        console.log('회원가입 성공, 서버 응답:', response);
+        Alert.alert('회원가입 완료', 'CarKey에 오신 것을 환영합니다!', [
+          {text: '확인', onPress: () => navigation.navigate('Board')},
+        ]);
+      })
+      .catch(error => {
+        console.error('회원가입 실패, 에러:', error);
+        Alert.alert('오류', '회원가입에 실패했습니다. 다시 시도해주세요.');
+      });
   };
 
   const handleSignIn = () => {
@@ -73,14 +84,29 @@ const Register = ({navigation}) => {
     const atSymbolCount = email.split('@').length - 1;
     // Check if the email contains ".com" or ".net"
     const isEmailValid = email.includes('.com') || email.includes('.net');
+
     if (atSymbolCount !== 1 || !isEmailValid) {
       Alert.alert('오류', '올바르지 않은 이메일 형식입니다.');
     } else {
-      // 중복 확인 완료 후 버튼 비활성화
-      setEmailChecked(true);
-      Alert.alert('중복 확인', '중복 확인 완료!');
-      setEmailChecked(true); // 이메일 중복 확인 완료 상태를 true로 설정
-      setEmailCheckButtonText('확인 완료'); // 버튼 텍스트를 "확인 완료"로 변경
+      // 이메일 값을 서버로 전달하여 중복 확인 요청
+      axios
+        .post('http://localhost:8080/user/loginId/exists', {loginId: email})
+        .then(response => {
+          const {data} = response;
+          if (data.success === 'true') {
+            // 중복되지 않은 경우
+            setEmailChecked(true);
+            setEmailCheckButtonText('확인 완료');
+            Alert.alert('중복 확인', '중복 확인 완료!');
+          } else {
+            // 중복된 경우
+            Alert.alert('중복 확인', '이미 사용 중인 이메일입니다.');
+          }
+        })
+        .catch(error => {
+          console.error('Error checking email duplication:', error);
+          Alert.alert('오류', '이메일 중복 확인에 실패했습니다.');
+        });
     }
   };
 
@@ -91,13 +117,29 @@ const Register = ({navigation}) => {
       // 영어 및 한글만 가능한 정규 표현식 검사에 실패한 경우
       Alert.alert('경고', '닉네임에 특수문자 및 공백은 허용되지 않습니다.');
     } else {
-      // 닉네임 중복 확인 로직
-      setNicknameChecked(true);
-      Alert.alert('중복 확인', '중복 확인 완료!');
-      setNicknameCheckButtonText('확인 완료');
+      // 닉네임 값을 서버로 전달하여 중복 확인 요청
+      axios
+        .post('http://localhost:8080/user/nickName/exists', {
+          nickName: nickname,
+        })
+        .then(response => {
+          const {data} = response;
+          if (data.success === 'true') {
+            // 중복되지 않은 경우
+            setNicknameChecked(true);
+            setNicknameCheckButtonText('확인 완료');
+            Alert.alert('중복 확인', '중복 확인 완료!');
+          } else {
+            // 중복된 경우
+            Alert.alert('중복 확인', '이미 사용 중인 닉네임입니다.');
+          }
+        })
+        .catch(error => {
+          console.error('Error checking nickname duplication:', error);
+          Alert.alert('오류', '닉네임 중복 확인에 실패했습니다.');
+        });
     }
   };
-
   const handleNicknameChange = newNickname => {
     if (newNickname.length > 6) {
       // 6글자를 초과하는 경우 경고창을 띄웁니다.
