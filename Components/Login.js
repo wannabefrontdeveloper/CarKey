@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import axios from 'axios';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -23,8 +24,34 @@ const Login = ({navigation}) => {
   };
 
   const onLogin = () => {
-    // 아이디와 비밀번호가 비어있을 때에도 임시로 로그인 성공으로 처리
-    navigation.navigate('Board');
+    // 이메일과 패스워드가 비어 있는지 체크
+    if (!email || !password) {
+      Alert.alert('입력 오류', '이메일과 패스워드를 모두 입력해주세요!');
+      return;
+    }
+
+    axios
+      .post('http://localhost:8080/user/login', {
+        loginId: email,
+        password: password,
+      })
+      .then(response => {
+        const {data} = response;
+        console.log(data); // 전체 응답 데이터를 로그로 출력
+        if (data.success === 'True') {
+          console.log('토큰:', data.data.accessToken); // 토큰 콘솔에 출력
+          navigation.navigate('Board');
+        } else {
+          Alert.alert('로그인 실패', '아이디나 비밀번호가 올바르지 않습니다.');
+        }
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 401) {
+          Alert.alert('로그인 실패', '아이디나 비밀번호가 올바르지 않습니다.');
+        } else {
+          Alert.alert('오류', '로그인에 실패했습니다.');
+        }
+      });
   };
 
   return (

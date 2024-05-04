@@ -11,8 +11,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 const Board = () => {
+  const [boardData, setBoardData] = useState([]);
   useEffect(() => {
     const backAction = () => {
       Alert.alert('경고!', '앱을 종료하시겠습니까?', [
@@ -34,124 +36,29 @@ const Board = () => {
     return () => backHandler.remove();
   }, []);
 
+  useEffect(() => {
+    // 서버에서 데이터를 가져오는 함수 호출
+    fetchBoardData();
+  }, []);
+
+  // 서버에서 데이터를 가져오는 함수
+  const fetchBoardData = async () => {
+    try {
+      console.log('Fetching board data...');
+      const response = await axios.get('http://localhost:8080/board/list');
+      console.log('Board data fetched successfully:', response.data);
+      // 서버에서 받아온 데이터를 state에 설정
+      setBoardData(response.data.data);
+    } catch (error) {
+      console.error('Error fetching board data:', error);
+      // 오류 처리
+    }
+  };
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
 
-  const items = [
-    {
-      id: '1',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '어떻게든 찾아낸다',
-      picture: require('../assets/Dent.png'), // 예시 이미지 경로
-    },
-    {
-      id: '2',
-      username: '이규동',
-      date: '2024-04-11',
-      title: '누가 긁고 갔음',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '3',
-      username: '김지원',
-      date: '2024-04-10',
-      title: 'ViSCA BARCA',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '4',
-      username: '송지우',
-      date: '2024-04-10',
-      title: '이병문 자퇴해라',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '5',
-      username: '김지원',
-      date: '2024-04-10',
-      title: '오늘 기아 승 있냐?',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '6',
-      username: '김선호',
-      date: '2024-04-10',
-      title: '기아 화이팅~~~~',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '7',
-      username: '김준희',
-      date: '2024-04-10',
-      title: '기아 화이팅~~',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '8',
-      username: '신동민',
-      date: '2024-04-10',
-      title: 'AI 개빡세다',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '9',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '10',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '11',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '12',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '13',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-    {
-      id: '14',
-      username: 'giwonk',
-      date: '2024-04-10',
-      title: '누가 긁고 갔네요.. 하',
-      text: '찾아내면 죽는다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
-    },
-  ];
+  const items = [];
 
   // 현재 페이지에 해당하는 항목들만 가져오는 함수
   const getItemsForCurrentPage = () => {
@@ -176,9 +83,10 @@ const Board = () => {
     navigation.navigate('Setting');
   };
 
-  const navigateToDetail = () => {
+  // navigateToDetail 함수 역시 수정이 필요합니다.
+  const navigateToDetail = (title, nickName, postDate) => {
     // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {username, date, title, text, picture});
+    navigation.navigate('DetailScreen', {title, nickName, postDate});
   };
 
   const handleCameraPress = () => {
@@ -198,9 +106,9 @@ const Board = () => {
     );
   };
 
-  const ListItem = ({username, date, title, text, picture}) => {
+  const ListItem = ({title, nickName, postDate}) => {
     // date를 JavaScript Date 객체로 파싱
-    const parsedDate = new Date(date);
+    const parsedDate = new Date(postDate);
 
     // 년, 월, 일, 시간, 분 정보 얻기
     const year = parsedDate.getFullYear();
@@ -215,11 +123,9 @@ const Board = () => {
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
       navigation.navigate('DetailScreen', {
-        username,
-        date,
-        text,
         title,
-        picture,
+        nickName,
+        postDate,
       });
     };
 
@@ -228,7 +134,7 @@ const Board = () => {
         <View style={styles.listItem}>
           <Text style={styles.listItemTitle}>{title}</Text>
           <View style={styles.userInfoContainer}>
-            <Text style={styles.listItemUsername}>{username}</Text>
+            <Text style={styles.listItemUsername}>{nickName}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
           </View>
         </View>
@@ -275,17 +181,15 @@ const Board = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={getItemsForCurrentPage()}
+        data={boardData}
         renderItem={({item}) => (
           <ListItem
-            username={item.username}
-            date={item.date}
-            title={item.title} // title 전달
-            text={item.text}
-            picture={item.picture} // picture 전달
+            title={item.title}
+            nickName={item.nickName}
+            postDate={item.postDate}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.boarId.toString()} // boardId를 고유 식별자로 사용
       />
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
       <View style={styles.bottomNav}>
