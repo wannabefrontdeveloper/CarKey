@@ -9,11 +9,47 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
+import {useEffect} from 'react';
+import {useState} from 'react';
+import axios from 'axios';
 
 const MyPage = () => {
+  const [userInfo, setUserInfo] = useState(null);
+  const {token} = useToken(); // TokenContext에서 token 가져오기
+  console.log('토큰 값:', token); // 토큰 값 콘솔 출력
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
   const navigation = useNavigation();
   const navigateToBoard = () => {
     navigation.navigate('Board');
+  };
+
+  useEffect(() => {
+    fetchUserInfo(); // 컴포넌트가 마운트되면 사용자 정보를 가져옴
+  }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8080/mypage/user/info',
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`, // 토큰을 헤더에 포함
+          },
+        },
+      );
+
+      const {data} = response;
+      console.log('서버에서 받아온 데이터:', data); // 받아온 데이터 콘솔 출력
+      if (data.success === 'True') {
+        setUserInfo(data.data); // 사용자 정보 설정
+      } else {
+        Alert.alert('에러', '회원 정보를 가져오지 못했습니다.');
+      }
+    } catch (error) {
+      console.error('에러:', error);
+      Alert.alert('에러', '회원 정보를 가져오는 중에 오류가 발생했습니다.');
+    }
   };
 
   // 내가 쓴 글 메뉴를 눌렀을 때 내비게이션 설정
@@ -91,7 +127,7 @@ const MyPage = () => {
 
         <View style={styles.profileContainer}>
           <Icon name="person-outline" size={50} color="#BDBDBD" />
-          <Text style={styles.username}>giwonk</Text>
+          <Text style={styles.username}>{userInfo?.nickName}</Text>
         </View>
 
         <View style={styles.divider} />

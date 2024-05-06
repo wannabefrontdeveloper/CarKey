@@ -59,8 +59,8 @@ const Register = ({navigation}) => {
       })
       .then(response => {
         console.log('회원가입 성공, 서버 응답:', response);
-        Alert.alert('회원가입 완료', 'CarKey에 오신 것을 환영합니다!', [
-          {text: '확인', onPress: () => navigation.navigate('Board')},
+        Alert.alert('회원가입 완료', '회원가입 성공! 로그인을 해주세요!', [
+          {text: '확인', onPress: () => navigation.navigate('Login')},
         ]);
       })
       .catch(error => {

@@ -8,6 +8,8 @@ import {
   Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native'; // useNavigation을 import 합니다.
+import axios from 'axios';
+import {useRoute} from '@react-navigation/native';
 
 const FindPassword = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +21,7 @@ const FindPassword = () => {
     return emailRegex.test(email);
   };
 
-  const handleFindPassword = () => {
+  const handleFindPassword = async () => {
     const containsCom = email.includes('.com');
     const containsNet = email.includes('.net');
 
@@ -31,11 +33,18 @@ const FindPassword = () => {
       Alert.alert('경고', '올바르지 않은 이메일 형식입니다.');
       return;
     }
-    // 이메일이 올바른 경우에만 비밀번호 찾기 로직을 실행
-    console.log(email);
 
-    // ChangePassword 화면으로 이동
-    navigation.navigate('ChangePassword');
+    try {
+      // 백엔드로 POST 요청 보내기
+      const response = await axios.post('http://localhost:8080/user/findpwd', {
+        loginId: email, // 이메일을 보냅니다. loginId는 백엔드에서 필요한 필드 이름으로 바꿔주세요.
+      });
+
+      // 응답 처리
+      console.log(response.data); // 응답에 유용한 데이터가 있다고 가정합니다.
+      // 필요한 경우 ChangePassword 화면으로 이동합니다.
+      navigation.navigate('ChangePassword', {email: email}); // 여기에 코드 추가
+    } catch (error) {}
   };
 
   return (

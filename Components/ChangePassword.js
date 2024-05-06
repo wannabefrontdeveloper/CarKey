@@ -7,12 +7,15 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import axios from 'axios'; // Axios를 가져옵니다.
 import {useNavigation} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 
 const ChangePasswordScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
+  const {email} = useRoute().params;
 
   const handlePasswordChange = text => {
     setPassword(text);
@@ -22,7 +25,7 @@ const ChangePasswordScreen = () => {
     setConfirmPassword(text);
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     if (password.trim() === '' || confirmPassword.trim() === '') {
       Alert.alert('경고', '패스워드를 입력해주세요!');
       return;
@@ -45,19 +48,41 @@ const ChangePasswordScreen = () => {
       return;
     }
 
-    // 비밀번호 변경 로직을 구현합니다.
-    // 여기에 비밀번호 변경에 대한 실제 로직을 추가합니다.
-    Alert.alert(
-      '비밀번호 변경 성공!',
-      '새로운 비밀번호로 로그인해주세요!',
-      [
-        {
-          text: '확인',
-          onPress: () => navigation.navigate('Login'), // Login.js 화면으로 이동
-        },
-      ],
-      {cancelable: false},
-    );
+    try {
+      // 이메일 값을 함께 보내기 위해 객체에 email 필드 추가
+      const data = {
+        newPassword: password, // 새 비밀번호
+        loginId: email, // 이메일
+      };
+
+      console.log('보내는 데이터:', data);
+
+      // 백엔드로 PUT 요청 보내기
+      const response = await axios.put(
+        'http://localhost:8080/user/mypage/infoChange/password',
+        data, // data 객체 전달
+      );
+
+      // 응답 처리
+      console.log(response.data); // 응답에 유용한 데이터가 있다고 가정합니다.
+
+      // 비밀번호 변경 성공 알림 후 로그인 화면으로 이동
+      Alert.alert(
+        '비밀번호 변경 성공!',
+        '새로운 비밀번호로 로그인해주세요!',
+        [
+          {
+            text: '확인',
+            onPress: () => navigation.navigate('Login'), // Login.js 화면으로 이동
+          },
+        ],
+        {cancelable: false},
+      );
+    } catch (error) {
+      // 에러 처리
+      console.error('에러:', error);
+      Alert.alert('에러', '비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (

@@ -1,6 +1,4 @@
-// Login.js
-
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,21 +8,39 @@ import {
   Alert,
 } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage import
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const Login = ({navigation}) => {
+  const {storedToken, setStoredToken} = useToken(); // TokenContext에서 storedToken 가져오기
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userNickname, setUserNickname] = useState(null); // 추가: 사용자 닉네임 상태 추가
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 AsyncStorage에서 토큰을 가져와서 상태에 저장
+    const getTokenFromStorage = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        setStoredToken(token); // AsyncStorage에서 가져온 토큰으로 상태 업데이트
+        console.log('저장된 토큰:', token); // 토큰 콘솔에 출력
+      } catch (error) {
+        console.error('토큰 가져오기 실패:', error);
+      }
+    };
+
+    getTokenFromStorage();
+  }, []);
 
   const handleGuestLogin = () => {
-    navigation.navigate('Board'); // 비회원 버튼을 누를 때 Board 화면으로 이동
+    navigation.navigate('Board');
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate('FindPassword'); // "패스워드를 잊으셨나요?" 를 눌렀을 때 FindPassword 화면으로 이동
+    navigation.navigate('FindPassword');
   };
 
   const onLogin = () => {
-    // 이메일과 패스워드가 비어 있는지 체크
     if (!email || !password) {
       Alert.alert('입력 오류', '이메일과 패스워드를 모두 입력해주세요!');
       return;
@@ -35,11 +51,16 @@ const Login = ({navigation}) => {
         loginId: email,
         password: password,
       })
-      .then(response => {
+      .then(async response => {
         const {data} = response;
-        console.log(data); // 전체 응답 데이터를 로그로 출력
+        console.log(data);
         if (data.success === 'True') {
-          console.log('토큰:', data.data.accessToken); // 토큰 콘솔에 출력
+          console.log('토큰:', data.data.accessToken);
+          setStoredToken(data.data.accessToken); // TokenContext의 상태 업데이트
+          // 로그인 성공 시 토큰을 AsyncStorage에 저장
+          await AsyncStorage.setItem('token', data.data.accessToken);
+          setStoredToken(data.data.accessToken); // 추가: 상태 업데이트
+          setUserNickname(data.data.nickName); // 추가: 사용자 닉네임 상태 업데이트
           navigation.navigate('Board');
         } else {
           Alert.alert('로그인 실패', '아이디나 비밀번호가 올바르지 않습니다.');
@@ -102,8 +123,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   title: {
-    fontSize: 60, // 폰트 사이즈 변경
-    fontWeight: '900', // 이미 가장 진하게 설정됨
+    fontSize: 60,
+    fontWeight: '900',
     marginBottom: 40,
   },
   input: {
