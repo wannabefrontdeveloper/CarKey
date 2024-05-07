@@ -15,12 +15,15 @@ import {
 import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import {useToken} from './TokenContext';
 
 const FeedbackScreen = () => {
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [feedback, setFeedback] = useState('');
   const [image, setImage] = useState(null);
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
 
   const handleChoosePhoto = () => {
     launchImageLibrary({noData: true}, response => {
@@ -36,7 +39,7 @@ const FeedbackScreen = () => {
     navigation.navigate('MyPage');
   };
 
-  const navigateToFinishFeedback = () => {
+  const navigateToFinishFeedback = async () => {
     if (!title || !feedback || !image) {
       Alert.alert(
         '입력 필요',
@@ -44,8 +47,42 @@ const FeedbackScreen = () => {
       );
       return;
     }
-    navigation.navigate('MyPage');
-    Alert.alert('의견 감사합니다!', '신속히 읽고 반영하겠습니다!');
+
+    try {
+      const formData = new FormData();
+
+      // boardSaveRequestDto 데이터를 JSON 문자열로 추가
+      const dto = {
+        title,
+        comment: feedback,
+      };
+      formData.append('feedbackSaveRequestDto', JSON.stringify(dto));
+
+      // 이미지 데이터 추가
+      formData.append('image', {
+        uri: image.uri,
+        name: image.fileName,
+        type: image.type,
+      });
+      console.log(formData);
+
+      const response = await axios.post(
+        'http://localhost:8080/mypage/feedback/save',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${storedToken}`,
+          },
+        },
+      );
+      console.log('Response:', response.data);
+      navigation.navigate('MyPage');
+      Alert.alert('의견 감사합니다!', '신속히 읽고 반영하겠습니다!');
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('오류', '글 작성 중 오류가 발생했습니다.');
+    }
   };
 
   const viewImageFullScreen = () => {

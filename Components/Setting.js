@@ -9,13 +9,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {useToken} from './TokenContext';
+import axios from 'axios';
 
 const Setting = () => {
   const navigation = useNavigation();
-
-  const navigateToMyPage = () => {
-    navigation.navigate('MyPage');
-  };
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
 
   const navigateToPreviousScreen = () => {
     navigation.goBack();
@@ -34,24 +33,40 @@ const Setting = () => {
       {text: '취소', style: 'cancel'},
       {
         text: '확인',
-        onPress: () => {
-          console.log('회원 탈퇴 확인');
-          // Navigate to Login screen after withdrawal confirmation
-          Alert.alert(
-            '탈퇴 완료',
-            '탈퇴가 완료되었습니다. \n\nCarKey를 이용해주셔서 감사합니다!',
-            [
+        onPress: async () => {
+          try {
+            const response = await axios.delete(
+              'http://localhost:8080/user/mypage/delete',
               {
-                text: '확인',
-                onPress: () => navigation.navigate('Login'), // Navigate to Login screen
+                headers: {
+                  Authorization: `Bearer ${storedToken}`, // 헤더에 토큰값 추가
+                },
               },
-            ],
-          );
+            );
+            if (response.data.success) {
+              console.log('회원 탈퇴 확인');
+              Alert.alert(
+                '탈퇴 완료',
+                '탈퇴가 완료되었습니다. \n\nCarKey를 이용해주셔서 감사합니다!',
+                [
+                  {
+                    text: '확인',
+                    onPress: () => navigation.navigate('Login'), // Navigate to Login screen
+                  },
+                ],
+              );
+            } else {
+              // Handle error response
+              console.error('회원 탈퇴 실패:', response.data.message);
+            }
+          } catch (error) {
+            // Handle network error
+            console.error('네트워크 에러:', error);
+          }
         },
       },
     ]);
   };
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>

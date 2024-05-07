@@ -1,75 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {useToken} from './TokenContext';
+import axios from 'axios';
 
 const Board = () => {
+  const [boardData, setBoardData] = useState([]);
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  const [refreshing, setRefreshing] = useState(false);
 
-  const items = [
-    {
-      id: '1',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '누가 긁고 갔네요.. 하',
-    },
-    {
-      id: '2',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '3',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '4',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '5',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '6',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '7',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '8',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '9',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-    {
-      id: '10',
-      username: 'giwonk',
-      date: '2024-04-10',
-      text: '3중 추돌 후기',
-    },
-  ];
+  const items = [];
 
   // 현재 페이지에 해당하는 항목들만 가져오는 함수
   const getItemsForCurrentPage = () => {
@@ -81,12 +25,36 @@ const Board = () => {
   const navigateToMyPage = () => {
     navigation.navigate('MyPage');
   };
-  const navigateToDetail = () => {
-    // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {username, date, text});
+
+  useEffect(() => {
+    // 서버에서 데이터를 가져오는 함수 호출
+    fetchMyBoardData();
+  }, []);
+
+  // 서버에서 데이터를 가져오는 함수
+  const fetchMyBoardData = async () => {
+    try {
+      console.log('Fetching board data...');
+      const response = await axios.get(
+        'http://localhost:8080/user/mypage/boardList',
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        },
+      );
+      console.log('Board data fetched successfully:', response.data);
+      // 서버에서 받아온 데이터를 state에 설정
+      setBoardData(response.data.data);
+      setRefreshing(false); // 새로고침 완료 후 상태 변경
+    } catch (error) {
+      console.error('Error fetching board data:', error);
+      // 오류 처리
+      setRefreshing(false); // 새로고침 완료 후 상태 변경
+    }
   };
 
-  const ListItem = ({username, date, text}) => {
+  const ListItem = ({title, username, date, text}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(date);
 
@@ -108,7 +76,7 @@ const Board = () => {
     return (
       <TouchableOpacity onPress={navigateToDetail}>
         <View style={styles.listItem}>
-          <Text style={styles.listItemText}>{text}</Text>
+          <Text style={styles.listItemText}>{title}</Text>
           <View style={styles.userInfoContainer}>
             <Text style={styles.listItemUsername}>{username}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
@@ -157,12 +125,13 @@ const Board = () => {
         </View>
       </View>
       <FlatList
-        data={getItemsForCurrentPage()}
+        data={boardData}
         renderItem={({item}) => (
           <ListItem
-            username={item.username}
-            date={item.date}
-            text={item.text}
+            title={item.title}
+            username={item.nickName}
+            date={item.postDate}
+            text={item.text} // 새로 추가된 부분
           />
         )}
         keyExtractor={item => item.id}

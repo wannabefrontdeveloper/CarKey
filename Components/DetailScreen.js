@@ -17,24 +17,32 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const DetailScreen = ({route}) => {
-  const {title, username, date, text, picture} = route.params;
-  console.log('Picture:', picture);
-  console.log('username:', username);
+  const {title, username, date, text, picture, boardId} = route.params;
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  console.log('boardId:', boardId);
 
-  // date에서 시간 정보 분리
-  const dateObj = new Date(date);
-  const dateString = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
-  const timeString = `${dateObj
-    .getHours()
-    .toString()
-    .padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+  const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
+
+  const fetchBoard = async () => {
+    try {
+      const url = `http://localhost:8080/board/${boardId}`;
+      const response = await axios.get(url);
+      setBoardData(response.data.data); // 서버에서 받은 데이터를 boardData에 저장
+      console.log('서버에서 받은 데이터:', response.data);
+    } catch (error) {
+      console.error('데이터를 불러오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBoard();
+  }, [boardId]);
 
   const navigation = useNavigation();
-  const [recommendCount, setRecommendCount] = useState(0); // 추천 수 상태 추가
   const scrollViewRef = useRef(null); // ScrollView에 대한 ref 생성
 
   const navigateToPreviousScreen = () => {
@@ -46,11 +54,7 @@ const DetailScreen = ({route}) => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    const dummyComments = [
-      {id: 1, author: 'User1', content: '첫 번째 댓글입니다.'},
-      {id: 2, author: 'User2', content: '두 번째 댓글입니다.'},
-      {id: 3, author: 'User3', content: '세 번째 댓글입니다.'},
-    ];
+    const dummyComments = [];
     setComments(dummyComments);
   }, []);
 
@@ -73,12 +77,34 @@ const DetailScreen = ({route}) => {
     // ScrollView의 스크롤을 최하단으로 이동
     scrollViewRef.current.scrollToEnd({animated: true});
   };
+  const handleRecommend = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+        },
+      };
 
-  const handleRecommend = () => {
-    setRecommendCount(recommendCount + 1); // 추천 수 증가
-    Alert.alert('알림', '게시글을 추천하셨습니다!');
+      const response = await axios.post(
+        `http://localhost:8080/board/${boardId}/recommend`,
+        null,
+        config,
+      );
+
+      if (response.data.success) {
+        // 백엔드에서 true를 반환한 경우
+        Alert.alert('알림', '게시글을 추천하셨습니다!');
+        // 추천 요청이 성공하면 화면을 다시 그림
+        fetchBoard();
+      } else {
+        // 백엔드에서 false를 반환한 경우
+        Alert.alert('알림', '게시글 추천을 취소하셨습니다!');
+      }
+    } catch (error) {
+      console.error('추천 요청 중 오류 발생:', error);
+      Alert.alert('오류', '추천 요청 중 오류가 발생했습니다.');
+    }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -98,7 +124,7 @@ const DetailScreen = ({route}) => {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -250}>
           <TextInput
             style={styles.input}
-            placeholder={`작성자: ${username}`}
+            value={`작성자: ${boardData ? boardData.nickName : ''}`} // 작성자 이름을 표시
             autoCapitalize="none"
             placeholderTextColor="#0e0d0d"
             editable={false}
@@ -106,21 +132,27 @@ const DetailScreen = ({route}) => {
           {/* 시간까지 표시되도록 수정 */}
           <TextInput
             style={styles.input}
-            placeholder={`작성 시간: ${dateString} ${timeString}`}
+            value={`작성 시간: ${boardData ? boardData.postDate : ''}`}
             autoCapitalize="none"
             placeholderTextColor="#0e0d0d"
             editable={false}
           />
-          {picture && (
-            <TouchableOpacity onPress={viewImageFullScreen}>
-              <Image source={picture} style={styles.picture} />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity onPress={viewImageFullScreen}>
+            {boardData && boardData.imgPath && (
+              <Image
+                source={{
+                  uri: `http://localhost:8080/boardImages/${boardData.imgPath}`,
+                }}
+                style={styles.picture}
+              />
+            )}
+          </TouchableOpacity>
           <TextInput
             style={[styles.input, styles.textInput]}
             placeholder={text}
             autoCapitalize="none"
             placeholderTextColor="#0a0a0a"
+            value={`${boardData ? boardData.comment : ''}`}
             editable={false}
             multiline={true}
             numberOfLines={10}
@@ -129,7 +161,8 @@ const DetailScreen = ({route}) => {
             style={styles.recommendButton}
             onPress={handleRecommend}>
             <Text style={styles.recommendButtonText}>
-              유용한 정보였다면 터치! 👍 ({recommendCount})
+              유용한 정보였다면 터치! 👍 (
+              {boardData ? boardData.recommendCount : ''})
             </Text>
           </TouchableOpacity>
           <Text style={styles.Comment}>댓글</Text>
@@ -163,7 +196,14 @@ const DetailScreen = ({route}) => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-            <Image source={picture} style={styles.modalImage} />
+            {boardData && boardData.imgPath ? (
+              <Image
+                source={{
+                  uri: `http://localhost:8080/boardImages/${boardData.imgPath}`,
+                }}
+                style={styles.modalImage}
+              />
+            ) : null}
           </TouchableWithoutFeedback>
         </View>
       </Modal>
@@ -200,6 +240,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 18,
     marginTop: 10,
+    color: 'black',
   },
   content: {
     padding: 20,
@@ -275,7 +316,7 @@ const styles = StyleSheet.create({
   recommendButton: {
     backgroundColor: '#4d91da',
     position: 'absolute',
-    bottom: 250,
+    bottom: 80,
     right: 90,
     paddingVertical: 18,
     paddingHorizontal: 20,

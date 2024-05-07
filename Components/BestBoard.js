@@ -22,7 +22,7 @@ const BestBoard = () => {
       date: '2024-04-10',
       title: '누가 긁고 갔네요.. 하',
       text: '어떻게든 찾아낸다',
-      picture: require('../assets/Scratch.png'), // 예시 이미지 경로
+      picture: require('C:/Users/HP/OneDrive-gachon/Desktop/CarKey/assets/logo.png'), // 예시 이미지 경로
     },
     {
       id: '2',

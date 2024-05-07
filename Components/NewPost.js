@@ -13,6 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
+import {useToken} from './TokenContext';
+import axios from 'axios';
 
 const NewPost = () => {
   const navigation = useNavigation();
@@ -20,6 +22,7 @@ const NewPost = () => {
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
   const [repairCost, setRepairCost] = useState('');
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
 
   const handleChoosePhoto = () => {
     // 사진을 첨부하기 전에 Alert를 표시
@@ -67,13 +70,49 @@ const NewPost = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title || !image || !repairCost || !content) {
       Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
       return;
     }
 
-    navigation.navigate('Board');
+    try {
+      const formData = new FormData();
+
+      // boardSaveRequestDto 데이터를 JSON 문자열로 추가
+      const dto = {
+        title,
+        cost: repairCost,
+        comment: content,
+      };
+      formData.append('boardSaveRequestDto', JSON.stringify(dto));
+
+      // 이미지 데이터 추가
+      formData.append('image', {
+        uri: image.uri,
+        name: image.fileName,
+        type: image.type,
+      });
+      console.log(formData);
+
+      const response = await axios.post(
+        'http://localhost:8080/board/save',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${storedToken}`,
+          },
+        },
+      );
+      console.log('Response:', response.data);
+
+      // 글 작성 완료 후 작업을 수행할 수 있습니다.
+      navigation.navigate('Board');
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('오류', '글 작성 중 오류가 발생했습니다.');
+    }
   };
 
   const handleCheckIconPress = () => {

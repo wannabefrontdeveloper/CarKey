@@ -8,6 +8,8 @@ import {
   Alert,
   BackHandler,
   Image,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
@@ -15,6 +17,8 @@ import axios from 'axios';
 
 const Board = () => {
   const [boardData, setBoardData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     const backAction = () => {
       Alert.alert('경고!', '앱을 종료하시겠습니까?', [
@@ -49,11 +53,14 @@ const Board = () => {
       console.log('Board data fetched successfully:', response.data);
       // 서버에서 받아온 데이터를 state에 설정
       setBoardData(response.data.data);
+      setRefreshing(false); // 새로고침 완료 후 상태 변경
     } catch (error) {
       console.error('Error fetching board data:', error);
       // 오류 처리
+      setRefreshing(false); // 새로고침 완료 후 상태 변경
     }
   };
+
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
@@ -84,9 +91,9 @@ const Board = () => {
   };
 
   // navigateToDetail 함수 역시 수정이 필요합니다.
-  const navigateToDetail = (title, nickName, postDate) => {
+  const navigateToDetail = (title, nickName, postDate, boardId) => {
     // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {title, nickName, postDate});
+    navigation.navigate('DetailScreen', {title, nickName, postDate, boardId});
   };
 
   const handleCameraPress = () => {
@@ -106,7 +113,7 @@ const Board = () => {
     );
   };
 
-  const ListItem = ({title, nickName, postDate}) => {
+  const ListItem = ({title, nickName, postDate, boardId}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(postDate);
 
@@ -126,7 +133,9 @@ const Board = () => {
         title,
         nickName,
         postDate,
+        boardId,
       });
+      console.log('Clicked on boardId:', boardId);
     };
 
     return (
@@ -165,6 +174,7 @@ const Board = () => {
     return pageButtons;
   };
 
+  // 수정된 부분: ScrollView 대신 FlatList로 변경
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -187,11 +197,14 @@ const Board = () => {
             title={item.title}
             nickName={item.nickName}
             postDate={item.postDate}
+            boardId={item.boardId} // boardId를 props로 전달
           />
         )}
-        keyExtractor={item => item.boarId.toString()} // boardId를 고유 식별자로 사용
+        keyExtractor={item => item.boardId.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchBoardData} />
+        }
       />
-      <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.button} onPress={navigateToBestBoard}>
           <Icon name="thumb-up-off-alt" size={40} color="#f7f4f4" />

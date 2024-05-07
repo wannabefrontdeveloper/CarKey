@@ -8,10 +8,14 @@ import {
   Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import {useToken} from './TokenContext';
 
 const ChangeNickname = () => {
   const [nickname, setNickname] = useState('');
   const navigation = useNavigation();
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  console.log('닉네임 변경 페이지 토큰 값:', storedToken);
 
   const handleNicknameChange = text => {
     // 특수 문자나 공백이 있는지 검사하는 정규식
@@ -29,11 +33,53 @@ const ChangeNickname = () => {
     }
   };
 
-  const handleNicknameUpdate = () => {
-    // 닉네임 업데이트 성공 알림
-    Alert.alert('알림', '닉네임이 성공적으로 변경되었습니다!', [
-      {text: '확인', onPress: () => navigation.navigate('Fixing')},
-    ]);
+  const handleNicknameUpdate = async () => {
+    if (!nickname.trim()) {
+      // 닉네임이 비어있을 경우 알림 표시
+      Alert.alert('알림', '닉네임을 입력해주세요!');
+      return;
+    }
+
+    try {
+      // 닉네임 중복 체크 API 호출
+      const checkDuplicateResponse = await axios.post(
+        'http://localhost:8080/user/nickName/exists',
+        {nickName: nickname},
+      );
+      console.log('닉네임 중복 체크 데이터:', {nickName: nickname});
+      console.log('닉네임 중복 체크 응답:', checkDuplicateResponse.data);
+
+      if (checkDuplicateResponse.data.success === 'false') {
+        // 닉네임 중복이 발생한 경우 알림 표시
+        Alert.alert('알림', '이미 사용 중인 닉네임입니다.');
+      } else {
+        // 닉네임 중복이 없는 경우 닉네임 변경 요청 API 호출
+        const changeNicknameResponse = await axios.put(
+          'http://localhost:8080/user/mypage/infoChange/nickName',
+          {nickName: nickname},
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`, // 헤더에 토큰값 추가
+            },
+          },
+        );
+        console.log('토큰 값:', storedToken);
+        console.log('닉네임 변경 요청 데이터:', {nickName: nickname});
+        console.log('닉네임 변경 응답:', changeNicknameResponse.data); // 변경 요청 응답 확인
+        if (changeNicknameResponse.data.success === 'True') {
+          // 닉네임 변경 성공 알림 표시
+          Alert.alert('알림', '닉네임이 성공적으로 변경되었습니다!', [
+            {text: '확인', onPress: () => navigation.navigate('Fixing')},
+          ]);
+        } else {
+          // 닉네임 변경 실패 시 알림 표시
+          Alert.alert('알림', '닉네임 변경에 실패했습니다.');
+        }
+      }
+    } catch (error) {
+      // 네트워크 에러 발생 시 알림 표시
+      Alert.alert('알림', '네트워크 에러가 발생했습니다.');
+    }
   };
 
   return (

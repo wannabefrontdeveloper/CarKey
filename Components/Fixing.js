@@ -9,15 +9,22 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native'; // useIsFocused 추가
 import axios from 'axios';
 import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const Fixing = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused(); // 화면 포커스 여부 확인
   const [userInfo, setUserInfo] = useState(null);
   const {token} = useToken(); // TokenContext에서 token 가져오기
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchUserInfo(); // 화면이 포커스를 얻었을 때만 사용자 정보를 가져옴
+    }
+  }, [isFocused]);
   console.log('토큰 값:', token); // 토큰 값 콘솔 출력
   useEffect(() => {
     fetchUserInfo(); // 컴포넌트가 마운트되면 사용자 정보를 가져옴
