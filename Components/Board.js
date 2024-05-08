@@ -14,10 +14,21 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Board = () => {
   const [boardData, setBoardData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 관리할 상태(State) 추가
+  const itemsPerPage = 7; // 페이지당 항목 수
+
+  // 화면 포커스 시 데이터 새로고침
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBoardData();
+    }, []),
+  );
 
   useEffect(() => {
     const backAction = () => {
@@ -61,17 +72,13 @@ const Board = () => {
     }
   };
 
-  const navigation = useNavigation();
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // 한 페이지에 보여질 항목 수
-
   const items = [];
 
-  // 현재 페이지에 해당하는 항목들만 가져오는 함수
+  // 현재 페이지에 해당하는 항목들만 가져오는 함수 수정
   const getItemsForCurrentPage = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return items.slice(startIndex, endIndex);
+    return boardData.slice(startIndex, endIndex);
   };
 
   const navigateToBestBoard = () => {
@@ -88,12 +95,6 @@ const Board = () => {
 
   const navigateToSetting = () => {
     navigation.navigate('Setting');
-  };
-
-  // navigateToDetail 함수 역시 수정이 필요합니다.
-  const navigateToDetail = (title, nickName, postDate, boardId) => {
-    // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {title, nickName, postDate, boardId});
   };
 
   const handleCameraPress = () => {
@@ -113,7 +114,7 @@ const Board = () => {
     );
   };
 
-  const ListItem = ({title, nickName, postDate, boardId}) => {
+  const ListItem = ({title, nickName, postDate, boardId, recommendCount}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(postDate);
 
@@ -134,6 +135,7 @@ const Board = () => {
         nickName,
         postDate,
         boardId,
+        recommendCount,
       });
       console.log('Clicked on boardId:', boardId);
     };
@@ -145,13 +147,16 @@ const Board = () => {
           <View style={styles.userInfoContainer}>
             <Text style={styles.listItemUsername}>{nickName}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
+            <Text style={styles.listItemRecommend}>
+              추천수: {recommendCount}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
 
-  // 페이지 버튼 생성 함수
+  // 페이지 버튼 렌더링 함수
   const renderPageButton = pageNumber => (
     <TouchableOpacity
       key={pageNumber}
@@ -166,7 +171,7 @@ const Board = () => {
 
   // 페이지 버튼 리스트 생성
   const renderPageButtons = () => {
-    const pageCount = Math.ceil(items.length / itemsPerPage);
+    const pageCount = Math.ceil(boardData.length / itemsPerPage);
     const pageButtons = [];
     for (let i = 1; i <= pageCount; i++) {
       pageButtons.push(renderPageButton(i));
@@ -191,13 +196,14 @@ const Board = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={boardData}
+        data={getItemsForCurrentPage()} // 현재 페이지에 맞는 데이터만 렌더링
         renderItem={({item}) => (
           <ListItem
             title={item.title}
             nickName={item.nickName}
             postDate={item.postDate}
-            boardId={item.boardId} // boardId를 props로 전달
+            boardId={item.boardId}
+            recommendCount={item.recommendCount}
           />
         )}
         keyExtractor={item => item.boardId.toString()}
@@ -205,6 +211,7 @@ const Board = () => {
           <RefreshControl refreshing={refreshing} onRefresh={fetchBoardData} />
         }
       />
+      <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.button} onPress={navigateToBestBoard}>
           <Icon name="thumb-up-off-alt" size={40} color="#f7f4f4" />
@@ -233,7 +240,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   listItem: {
-    padding: 19,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#cccccc',
     flexDirection: 'row',
@@ -269,6 +276,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888888',
   },
+  listItemRecommend: {
+    fontSize: 14,
+    color: '#888888',
+  },
   userInfoContainer: {
     alignItems: 'flex-end',
   },
@@ -282,6 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8fa1b4',
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 10,
   },
   currentPageButton: {
     backgroundColor: '#4d91da', // 현재 페이지 버튼의 배경색 변경

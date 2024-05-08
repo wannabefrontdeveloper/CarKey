@@ -44,7 +44,9 @@ const FindPassword = () => {
       console.log(response.data); // 응답에 유용한 데이터가 있다고 가정합니다.
       // 필요한 경우 ChangePassword 화면으로 이동합니다.
       navigation.navigate('ChangePassword', {email: email}); // 여기에 코드 추가
-    } catch (error) {}
+    } catch (error) {
+      Alert.alert('경고', '존재하지 않는 이메일입니다.');
+    }
   };
 
   return (

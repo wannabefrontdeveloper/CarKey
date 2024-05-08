@@ -15,15 +15,62 @@ import {
   Keyboard,
   Alert, // Alert 추가
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native'; // useIsFocused 추가
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
+import {useFocusEffect} from '@react-navigation/native';
 
 const DetailScreen = ({route}) => {
   const {title, username, date, text, picture, boardId} = route.params;
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
   console.log('boardId:', boardId);
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
+  // DetailScreen 컴포넌트 내에서 Menu 아이콘 및 상태 추가
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // 메뉴 토글 함수
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const isFocused = useIsFocused(); // 화면의 포커스 여부 확인
+  // 나머지 코드 생략
+  useEffect(() => {
+    if (isFocused) {
+      fetchBoard(); // 화면이 다시 포커스를 받을 때마다 데이터 새로고침
+    }
+  }, [isFocused]); // isFocused 상태가 변경될 때마다 실행
+
+  // 삭제 기능 함수
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/board/${boardId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        },
+      );
+      if (response.data.success) {
+        // 삭제 성공
+        Alert.alert('알림', '게시글이 삭제되었습니다.');
+        // 삭제 후 이전 화면으로 돌아가기
+        navigateToPreviousScreen();
+      } else {
+        // 삭제 실패
+        Alert.alert('알림', '게시글 삭제에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('게시글 삭제 중 오류 발생:', error);
+      Alert.alert('오류', '게시글 삭제 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleEdit = () => {
+    // 수정 화면으로 이동하고 현재 게시글 데이터를 전달할 수 있습니다.
+    navigation.navigate('EditScreen', {boardId, imageUrl: boardData.imgPath});
+  };
 
   const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
 
@@ -41,6 +88,12 @@ const DetailScreen = ({route}) => {
   useEffect(() => {
     fetchBoard();
   }, [boardId]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBoard();
+    }, [boardId]),
+  );
 
   const navigation = useNavigation();
   const scrollViewRef = useRef(null); // ScrollView에 대한 ref 생성
@@ -60,6 +113,10 @@ const DetailScreen = ({route}) => {
 
   const viewImageFullScreen = () => {
     setModalVisible(true);
+  };
+
+  const handleImageLoad = () => {
+    setIsLoadingImage(false);
   };
 
   const handleCommentSubmit = () => {
@@ -93,7 +150,7 @@ const DetailScreen = ({route}) => {
 
       if (response.data.success) {
         // 백엔드에서 true를 반환한 경우
-        Alert.alert('알림', '게시글을 추천하셨습니다!');
+        Alert.alert('알림', '감사합니다!');
         // 추천 요청이 성공하면 화면을 다시 그림
         fetchBoard();
       } else {
@@ -113,8 +170,25 @@ const DetailScreen = ({route}) => {
           onPress={navigateToPreviousScreen}>
           <Icon name="arrow-back" size={30} color="#ffffff" />
         </TouchableOpacity>
-        <Text style={styles.navbarText}>{title}</Text>
+        <Text style={styles.navbarText}>
+          {/* title이 8글자보다 길면 8글자까지만 잘라서 표시 */}
+          {title.length > 6 ? `${title.substring(0, 6)}...` : title}
+        </Text>
+        <TouchableOpacity style={styles.menuContainer} onPress={toggleMenu}>
+          <Icon name="more-vert" size={30} color="#ffffff" />
+        </TouchableOpacity>
       </View>
+      {isMenuOpen && (
+        <View style={styles.menu}>
+          <TouchableOpacity onPress={handleEdit}>
+            <Text style={styles.menuItem}>수정</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDelete}>
+            <Text style={styles.menuItem}>삭제</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <ScrollView
         ref={scrollViewRef} // ScrollView에 ref 연결
         style={styles.content}
@@ -141,12 +215,19 @@ const DetailScreen = ({route}) => {
             {boardData && boardData.imgPath && (
               <Image
                 source={{
-                  uri: `http://localhost:8080/boardImages/${boardData.imgPath}`,
+                  uri: `http://localhost:8080/image/boardImages/${boardData.imgPath}`,
                 }}
                 style={styles.picture}
               />
             )}
           </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            value={`수리 비용: ${boardData ? boardData.cost : ''}`} // 작성자 이름을 표시
+            autoCapitalize="none"
+            placeholderTextColor="#0e0d0d"
+            editable={false}
+          />
           <TextInput
             style={[styles.input, styles.textInput]}
             placeholder={text}
@@ -199,7 +280,7 @@ const DetailScreen = ({route}) => {
             {boardData && boardData.imgPath ? (
               <Image
                 source={{
-                  uri: `http://localhost:8080/boardImages/${boardData.imgPath}`,
+                  uri: `http://localhost:8080/image/boardImages/${boardData.imgPath}`,
                 }}
                 style={styles.modalImage}
               />
@@ -326,6 +407,27 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  // 메뉴 스타일
+  menu: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 5,
+    zIndex: 1,
+  },
+  menuItem: {
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  menuContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 25,
   },
 });
 

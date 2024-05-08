@@ -1,30 +1,55 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import {useToken} from './TokenContext';
+import {useResponse} from './ResponseContext';
 
 const AnalysisFirst = ({route}) => {
   const {photo} = route.params;
   const navigation = useNavigation();
+  const {storedToken} = useToken();
+  const {updateResponseData} = useResponse(); // ResponseContext 사용
+
   useEffect(() => {
     console.log('전달된 사진 데이터:', photo);
     console.log('이미지 경로:', photo.path);
   }, [photo]);
 
-  if (!photo || !photo.path) {
-    // photo.uri 에서 photo.path로 수정
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>이미지를 찾을 수 없습니다.</Text>
-      </View>
-    );
-  }
+  const handleAnalysis = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('image', {
+        uri: 'file://' + photo.path,
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+      });
+
+      navigation.navigate('Loading');
+      const response = await axios.post(
+        'http://localhost:8080/user/analyze/cost',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${storedToken}`,
+          },
+        },
+      );
+
+      console.log('Response:', response.data);
+
+      // 서버 응답 값을 ResponseProvider를 통해 공유
+      updateResponseData(response.data);
+
+      // 분석 결과에 따라 다음 화면으로 이동하거나 작업 수행
+    } catch (error) {
+      console.error('분석 요청 중 오류 발생:', error);
+    }
+  };
 
   const navigateToCameraScreen = () => {
     navigation.navigate('CameraScreen');
-  };
-
-  const navigateToLoading = () => {
-    navigation.navigate('Loading');
   };
 
   return (
@@ -34,7 +59,7 @@ const AnalysisFirst = ({route}) => {
         <Image source={{uri: 'file://' + photo.path}} style={styles.image} />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={navigateToLoading}>
+        <TouchableOpacity style={styles.button} onPress={handleAnalysis}>
           <Text style={styles.buttonText}>분석하기</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -64,7 +89,7 @@ const styles = StyleSheet.create({
     height: 400,
   },
   text: {
-    fontSize: 35, // 이미지와 텍스트 사이의 간격 조절
+    fontSize: 35,
     color: 'black',
     fontWeight: 'bold',
     marginBottom: 20,

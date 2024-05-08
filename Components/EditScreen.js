@@ -16,13 +16,33 @@ import {useNavigation} from '@react-navigation/native';
 import {useToken} from './TokenContext';
 import axios from 'axios';
 
-const NewPost = () => {
+const EditScreen = ({route}) => {
+  // route에서 params를 받아옴
+  const {boardId, imageUrl} = route.params; // route.params에서 boardId와 imageUrl를 추출
+  console.log('boardId:', boardId);
+  console.log('imageUrl:', imageUrl); // imageUrl 확인용
+  console.log('boardId:', boardId);
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(imageUrl ? {uri: imageUrl} : null);
   const [repairCost, setRepairCost] = useState('');
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
+  const fetchBoard = async () => {
+    try {
+      const url = `http://localhost:8080/board/${boardId}`;
+      const response = await axios.get(url);
+      setBoardData(response.data.data); // 서버에서 받은 데이터를 boardData에 저장
+      console.log('서버에서 받은 데이터:', response.data);
+    } catch (error) {
+      console.error('데이터를 불러오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBoard();
+  }, [boardId]);
 
   const handleChoosePhoto = () => {
     // 사진을 첨부하기 전에 Alert를 표시
@@ -36,9 +56,13 @@ const NewPost = () => {
           onPress: () =>
             launchImageLibrary({noData: true}, response => {
               console.log('Response:', response);
-              if (response.assets && response.assets.length > 0) {
+              if (
+                !response.didCancel &&
+                response.assets &&
+                response.assets.length > 0
+              ) {
                 const selectedImage = response.assets[0];
-                setImage(selectedImage);
+                setImage({uri: selectedImage.uri});
               }
             }),
         },
@@ -118,7 +142,7 @@ const NewPost = () => {
   const handleCheckIconPress = () => {
     Alert.alert(
       '글 작성 완료',
-      '글 작성을 완료하시겠습니까?',
+      '수정을 완료하시겠습니까?',
       [
         {text: '취소', style: 'cancel'},
         {text: '확인', onPress: handleSubmit},
@@ -134,10 +158,10 @@ const NewPost = () => {
           <View style={styles.navbar}>
             <TouchableOpacity
               style={styles.iconContainer}
-              onPress={navigateToBoard}>
+              onPress={() => navigation.goBack()}>
               <Icon name="arrow-back" size={35} color="#ffffff" />
             </TouchableOpacity>
-            <Text style={styles.navbarText}>새 글 쓰기</Text>
+            <Text style={styles.navbarText}>게시글 수정</Text>
             <TouchableOpacity
               style={styles.iconContainer}
               onPress={handleCheckIconPress}>
@@ -148,7 +172,7 @@ const NewPost = () => {
           <TextInput
             style={styles.input}
             placeholder="제목을 입력하세요 (최대 15글자)"
-            value={title}
+            value={boardData?.title}
             onChangeText={text => {
               // 입력된 텍스트에서 공백을 제거하고 15글자까지 자르기
               const trimmedText = text.trim().substring(0, 15);
@@ -174,7 +198,9 @@ const NewPost = () => {
             <Text style={styles.imageText}>첨부된 사진:</Text>
             {image && (
               <Image
-                source={{uri: image.uri}}
+                source={{
+                  uri: `http://localhost:8080/image/boardImages/${image.uri}`,
+                }}
                 style={[styles.previewImage, {alignSelf: 'center'}]}
               />
             )}
@@ -184,7 +210,7 @@ const NewPost = () => {
             <TextInput
               style={[styles.input, styles.repairCostInput]}
               placeholder="수리비는 얼마가 나왔나요?"
-              value={repairCost}
+              value={boardData?.cost}
               onChangeText={setRepairCost}
               keyboardType="numeric"
             />
@@ -193,7 +219,7 @@ const NewPost = () => {
 
           <TextInput
             style={[styles.input, styles.multiLineInput]}
-            value={content}
+            value={boardData?.comment}
             onChangeText={setContent}
             placeholder="내용을 입력하세요"
             multiline
@@ -284,4 +310,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewPost;
+export default EditScreen;

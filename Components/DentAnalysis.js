@@ -1,18 +1,16 @@
 import React from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // 확대경 아이콘을 위해 MaterialIcons 사용
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {useResponse} from './ResponseContext'; // ResponseContext 추가
 
 const DentAnalysis = () => {
-  // 이미지나 텍스트에 대한 이벤트 핸들러를 필요에 따라 여기에 정의합니다.
   const navigation = useNavigation();
+  const {responseData} = useResponse(); // ResponseContext 사용
+  console.log('서버에서 받은 데이터:', responseData);
 
   const navigateToScratchAnalysis = () => {
     navigation.navigate('ScratchAnalysis');
-  };
-
-  const navigateToDentAnalysis = () => {
-    navigation.navigate('DentAnalysis');
   };
 
   const navigateToMoneyAnalysis = () => {
@@ -25,10 +23,11 @@ const DentAnalysis = () => {
         <Text style={styles.navbarText}>덴트 분석 결과</Text>
       </View>
       <Image
-        source={require('../assets/Dent2.png')} // 올바른 이미지 경로로 교체하세요.
+        source={{
+          uri: `http://localhost:8080/image/ai/crushed/${responseData.data.crushedImg}`,
+        }}
         style={styles.mapImage}
       />
-      {/* 아이콘과 설명을 추가하는 섹션 시작 */}
       <View style={styles.analysisSection}>
         <Icon name="child-care" size={60} color="#000" />
         <View style={styles.balloon}>
@@ -39,7 +38,6 @@ const DentAnalysis = () => {
           </Text>
         </View>
       </View>
-      {/* 아이콘과 설명을 추가하는 섹션 끝 */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -74,12 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
   },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'black',
-    margin: 10,
-  },
   mapImage: {
     width: 400,
     height: 400,
@@ -90,15 +82,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignSelf: 'stretch', // 컨테이너의 너비를 화면 너비에 맞춥니다.
-    marginBottom: 20, // 컨테이너 하단에 여백 추가
+    alignSelf: 'stretch',
+    marginBottom: 20,
   },
   button: {
     backgroundColor: '#82888f',
     padding: 15,
     borderRadius: 5,
-    flex: 1, // 컨테이너 내에서 동일한 비율로 공간을 차지하도록 설정합니다.
-
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -106,7 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     padding: 15,
     borderRadius: 5,
-    flex: 1, // 컨테이너 내에서 동일한 비율로 공간을 차지하도록 설정합니다.
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -117,11 +108,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -40, // 버튼과의 간격을 위해 추가
+    marginTop: -40,
     marginBottom: 29,
   },
   analysisText: {
-    marginLeft: 10, // 아이콘과 텍스트 사이의 간격을 위해 추가
+    marginLeft: 10,
     fontSize: 25,
     color: '#000',
   },

@@ -5,8 +5,13 @@ const TokenContext = createContext();
 export const TokenProvider = ({children}) => {
   const [storedToken, setStoredToken] = useState(null);
 
+  // 토큰 삭제 함수
+  const removeToken = () => {
+    setStoredToken(null); // 토큰을 삭제합니다.
+  };
+
   return (
-    <TokenContext.Provider value={{storedToken, setStoredToken}}>
+    <TokenContext.Provider value={{storedToken, setStoredToken, removeToken}}>
       {children}
     </TokenContext.Provider>
   );

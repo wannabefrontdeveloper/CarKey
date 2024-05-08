@@ -54,7 +54,7 @@ const Board = () => {
     }
   };
 
-  const ListItem = ({title, username, date, text}) => {
+  const ListItem = ({title, username, date, text, recommendCount}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(date);
 
@@ -70,7 +70,12 @@ const Board = () => {
 
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-      navigation.navigate('DetailScreen', {username, date, text});
+      navigation.navigate('DetailScreen', {
+        username,
+        date,
+        text,
+        recommendCount,
+      });
     };
 
     return (
@@ -80,6 +85,9 @@ const Board = () => {
           <View style={styles.userInfoContainer}>
             <Text style={styles.listItemUsername}>{username}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
+            <Text style={styles.listItemRecommend}>
+              추천수: {recommendCount}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -131,10 +139,11 @@ const Board = () => {
             title={item.title}
             username={item.nickName}
             date={item.postDate}
-            text={item.text} // 새로 추가된 부분
+            text={item.text}
+            recommendCount={item.recommendCount}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
       />
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
     </View>

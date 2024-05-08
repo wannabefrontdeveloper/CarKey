@@ -23,7 +23,6 @@ const Login = ({navigation}) => {
       try {
         const token = await AsyncStorage.getItem('token');
         setStoredToken(token); // AsyncStorage에서 가져온 토큰으로 상태 업데이트
-        console.log('저장된 토큰:', token); // 토큰 콘솔에 출력
       } catch (error) {
         console.error('토큰 가져오기 실패:', error);
       }
