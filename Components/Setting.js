@@ -29,43 +29,50 @@ const Setting = () => {
   };
 
   const handleWithdrawalPress = () => {
-    Alert.alert('회원 탈퇴', '정말로 회원 탈퇴를 하시겠어요?', [
-      {text: '취소', style: 'cancel'},
-      {
-        text: '확인',
-        onPress: async () => {
-          try {
-            const response = await axios.delete(
-              'http://localhost:8080/user/mypage/delete',
-              {
-                headers: {
-                  Authorization: `Bearer ${storedToken}`, // 헤더에 토큰값 추가
-                },
-              },
-            );
-            if (response.data.success) {
-              console.log('회원 탈퇴 확인');
-              Alert.alert(
-                '탈퇴 완료',
-                '탈퇴가 완료되었습니다. \n\nCarKey를 이용해주셔서 감사합니다!',
-                [
-                  {
-                    text: '확인',
-                    onPress: () => navigation.navigate('Login'), // Navigate to Login screen
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
+        cancelable: true,
+      });
+    } else {
+      Alert.alert('회원 탈퇴', '정말로 회원 탈퇴를 하시겠어요?', [
+        {text: '취소', style: 'cancel'},
+        {
+          text: '확인',
+          onPress: async () => {
+            try {
+              const response = await axios.delete(
+                'http://localhost:8080/user/mypage/delete',
+                {
+                  headers: {
+                    Authorization: `Bearer ${storedToken}`, // 헤더에 토큰값 추가
                   },
-                ],
+                },
               );
-            } else {
-              // Handle error response
-              console.error('회원 탈퇴 실패:', response.data.message);
+              if (response.data.success) {
+                console.log('회원 탈퇴 확인');
+                Alert.alert(
+                  '탈퇴 완료',
+                  '탈퇴가 완료되었습니다. \n\nCarKey를 이용해주셔서 감사합니다!',
+                  [
+                    {
+                      text: '확인',
+                      onPress: () => navigation.navigate('Login'), // Navigate to Login screen
+                    },
+                  ],
+                );
+              } else {
+                // Handle error response
+                console.error('회원 탈퇴 실패:', response.data.message);
+              }
+            } catch (error) {
+              // Handle network error
+              console.error('네트워크 에러:', error);
             }
-          } catch (error) {
-            // Handle network error
-            console.error('네트워크 에러:', error);
-          }
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
   return (
     <View style={styles.container}>

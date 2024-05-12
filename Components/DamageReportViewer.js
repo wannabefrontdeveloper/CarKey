@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,39 +11,120 @@ import {
 import {Calendar} from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
+
+// ImageFullScreen 화면 import
+import ImageFullScreen from './ImageFullScreen';
 
 const DamageReportView = () => {
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
+  const [distinctAnalyzeDates, setDistinctAnalyzeDates] = useState([]);
+  const {token} = useToken(); // TokenContext에서 token 가져오기
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  console.log('토큰 값:', storedToken); // 토큰 값 콘솔 출력
+  const [analysisData, setAnalysisData] = useState([]); // 분석 내역 데이터 상태 추가
+  // 모달 상태
+  const [modalVisible, setModalVisible] = useState(false);
+  // 선택된 이미지의 URI
+  const [selectedImageUri, setSelectedImageUri] = useState(null);
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 서버로부터 데이터 가져오기
+    fetchDistinctAnalyzeDates();
+  }, []);
+
+  const fetchDistinctAnalyzeDates = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8080/user/mypage/analyze',
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`, // 토큰을 헤더에 포함
+          },
+        },
+      );
+      // 서버에서 받은 데이터의 구조에 따라 상태 업데이트
+      setDistinctAnalyzeDates(response.data.data.analyzeDates);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const fetchAnalysisListForDate = async date => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/user/mypage/analyze/list',
+        {
+          analyzeDate: date, // 선택된 날짜 전송
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`, // 토큰을 헤더에 포함
+          },
+        },
+      );
+      // 날짜 정보를 추가하여 상태 설정
+      const enrichedData = response.data.data.map(item => ({
+        ...item,
+        date: date,
+      }));
+      setAnalysisData(enrichedData);
+      console.log('분석 리스트:', response.data);
+    } catch (error) {
+      console.error('Error fetching analysis list:', error);
+    }
+  };
+
+  console.log('analysisData:', analysisData);
+  console.log('analysisForSelectedDate:', analysisForSelectedDate);
+
+  const getAnalysisForSelectedDate = () => {
+    // analysisData가 비어있지 않은 경우 해당 날짜 데이터 검색
+    if (analysisData.length > 0) {
+      return analysisData.find(data => data.date === selectedDate);
+    }
+    return {}; // 데이터가 없는 경우 빈 객체 반환
+  };
+
+  // 날짜를 누를 때 발생하는 이벤트 핸들러
+  const handleDatePress = date => {
+    // 선택된 날짜를 상태에 저장하고 해당 날짜에 대한 분석 리스트를 가져옴
+    setSelectedDate(date);
+    fetchAnalysisListForDate(date);
+  };
 
   const navigateToMyPage = () => {
     navigation.navigate('MyPage');
   };
 
-  // 날짜를 누를 때 발생하는 이벤트 핸들러
-  const handleDatePress = date => {
-    // 선택된 날짜를 상태에 저장합니다.
-    setSelectedDate(date);
-  };
-
-  // 분석 내역 데이터 예시
-  const analysisData = [
-    {
-      id: 1,
-      date: '2024-03-18',
-      time: '오전 10시 50분',
-      imageUrl: 'https://t1.daumcdn.net/cfile/blog/99D6D3425BC4C86C27',
-      estimatedCost: '340000원',
-    },
-    // 다른 분석 내역 데이터들...
-  ];
-
-  // 선택된 날짜에 해당하는 분석 내역을 가져오는 함수
-  const getAnalysisForSelectedDate = () => {
-    return analysisData.find(data => data.date === selectedDate);
-  };
-
   const analysisForSelectedDate = getAnalysisForSelectedDate();
+
+  const getMarkedDates = () => {
+    const markedDates = {};
+
+    distinctAnalyzeDates.forEach(date => {
+      // 분석이 수행된 날짜를 markedDates 객체에 추가
+      markedDates[date] = {marked: true, dotColor: 'red'};
+    });
+
+    return markedDates;
+  };
+
+  // 이미지를 클릭했을 때 모달을 열고 이미지 URI를 설정하는 함수
+  const handleImageClick = uri => {
+    setSelectedImageUri(uri);
+    // ImageFullScreen 화면으로 이동
+    navigation.navigate('ImageFullScreen', {imageUri: uri});
+  };
+
+  // 모달을 닫는 함수
+  const closeModal = () => {
+    setSelectedImageUri(null);
+    setModalVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,25 +139,44 @@ const DamageReportView = () => {
       <ScrollView style={styles.scrollView}>
         <Calendar
           style={styles.calendar}
-          current={'2024-04-15'}
-          markedDates={{
-            '2024-03-18': {marked: true, dotColor: 'red'}, // 분석 내역이 존재하는 날짜에 빨간색 점 추가
-            // 다른 날짜들의 마킹...
-          }}
+          current={new Date().toISOString().split('T')[0]} // 현재 날짜로 설정
+          markedDates={getMarkedDates()} // getMarkedDates 함수로 마킹된 날짜들 가져오기
           onDayPress={day => handleDatePress(day.dateString)} // onDayPress 이벤트 핸들러 추가
         />
-        {analysisForSelectedDate && ( // 선택된 날짜에 분석 내역이 있을 경우에만 보여줍니다.
+        {selectedDate && analysisForSelectedDate && (
           <>
-            <Text style={[styles.text, styles.centerText]}>
-              {selectedDate} {analysisForSelectedDate.time}
-            </Text>
-            <Image
-              source={{uri: analysisForSelectedDate.imageUrl}}
-              style={styles.image}
-            />
-            <Text style={[styles.text, styles.centerText]}>
-              예상 수리비 : {analysisForSelectedDate.estimatedCost}
-            </Text>
+            {analysisData.map((analysis, index) => (
+              <View key={index}>
+                <Text
+                  style={[
+                    styles.text,
+                    styles.centerText,
+                    {
+                      backgroundColor: '#4d91da',
+                      color: 'white',
+                      borderRadius: 10,
+                    },
+                  ]}>
+                  분석 날짜: {analysis.analyzeDatetime}
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    handleImageClick(
+                      `http://localhost:8080/image/ai/original/${analysis.originalImg}`,
+                    )
+                  }>
+                  <Image
+                    source={{
+                      uri: `http://localhost:8080/image/ai/original/${analysis.originalImg}`,
+                    }}
+                    style={styles.image}
+                  />
+                </TouchableOpacity>
+                <Text style={[styles.text, styles.centerText]}>
+                  예상 수리비 : {analysis.totalPrice}원
+                </Text>
+              </View>
+            ))}
           </>
         )}
       </ScrollView>

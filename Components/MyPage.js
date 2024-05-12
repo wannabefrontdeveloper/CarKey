@@ -17,8 +17,7 @@ import axios from 'axios';
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const {token} = useToken(); // TokenContext에서 token 가져오기
-  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
-  console.log('토큰 값:', token); // 토큰 값 콘솔 출력
+  const {storedToken, removeToken} = useToken(); // TokenContext에서 storedToken과 removeToken 가져오기
   const isFocused = useIsFocused(); // 화면 포커스 여부 확인
   const navigation = useNavigation();
   const navigateToBoard = () => {
@@ -106,8 +105,8 @@ const MyPage = () => {
         {
           text: '확인',
           onPress: () => {
-            // 여기에 로그아웃 처리 코드를 추가합니다.
-            console.log('로그아웃 되었습니다.');
+            // 토큰 삭제 함수를 호출하여 토큰값을 null로 설정하여 로그아웃 상태로 변경합니다.
+            removeToken();
             // 로그아웃 후 로그인 화면으로 이동합니다.
             navigation.navigate('Login');
           },

@@ -9,7 +9,7 @@ const Loading = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('ScratchAnalysis');
-    }, 20000);
+    }, 30000);
 
     return () => clearTimeout(timer);
   }, []);

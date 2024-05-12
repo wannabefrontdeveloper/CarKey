@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {useFocusEffect} from '@react-navigation/native';
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const Board = () => {
   const [boardData, setBoardData] = useState([]);
@@ -22,6 +23,8 @@ const Board = () => {
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 관리할 상태(State) 추가
   const itemsPerPage = 7; // 페이지당 항목 수
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  console.log('게시판에서의 토큰 값:', storedToken); // 토큰 값 콘솔 출력
 
   // 화면 포커스 시 데이터 새로고침
   useFocusEffect(
@@ -86,11 +89,29 @@ const Board = () => {
   };
 
   const navigateToMyPage = () => {
-    navigation.navigate('MyPage');
+    // 여기서 토큰값을 확인하고 그에 따른 동작을 수행합니다.
+
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
+        cancelable: true,
+      });
+    } else {
+      // 토큰값이 존재하는 경우 마이페이지로 이동합니다.
+      navigation.navigate('MyPage');
+    }
   };
 
   const navigateToNewPost = () => {
-    navigation.navigate('NewPost');
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
+        cancelable: true,
+      });
+    } else {
+      // 토큰값이 존재하는 경우 마이페이지로 이동합니다.
+      navigation.navigate('NewPost');
+    }
   };
 
   const navigateToSetting = () => {

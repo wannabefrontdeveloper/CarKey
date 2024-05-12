@@ -15,20 +15,24 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
 import {useToken} from './TokenContext';
 import axios from 'axios';
+import {useImage} from './ImageContext';
 
 const EditScreen = ({route}) => {
   // route에서 params를 받아옴
   const {boardId, imageUrl} = route.params; // route.params에서 boardId와 imageUrl를 추출
   console.log('boardId:', boardId);
   console.log('imageUrl:', imageUrl); // imageUrl 확인용
-  console.log('boardId:', boardId);
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(imageUrl ? {uri: imageUrl} : null);
+  const [image, setImage] = useState(imageUrl ? {uri: imageUrl} : null); // 초기 이미지 상태 설정
   const [repairCost, setRepairCost] = useState('');
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
   const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
+  const [imageUri, setImageUri] = useState(imageUrl); // imageUrl 상태 추가
+  const [boardTitle, setBoardTitle] = useState('');
+  const [boardContent, setBoardContent] = useState('');
+  const [boardRepairCost, setBoardRepairCost] = useState('');
   const fetchBoard = async () => {
     try {
       const url = `http://localhost:8080/board/${boardId}`;
@@ -39,6 +43,15 @@ const EditScreen = ({route}) => {
       console.error('데이터를 불러오는 중 오류 발생:', error);
     }
   };
+
+  useEffect(() => {
+    // 서버에서 받아온 데이터가 있다면 해당 데이터로 상태 초기화
+    if (boardData) {
+      setBoardTitle(boardData.title);
+      setBoardContent(boardData.comment);
+      setBoardRepairCost(boardData.cost);
+    }
+  }, [boardData]);
 
   useEffect(() => {
     fetchBoard();
@@ -62,6 +75,7 @@ const EditScreen = ({route}) => {
                 response.assets.length > 0
               ) {
                 const selectedImage = response.assets[0];
+                console.log('Selected Image Name:', selectedImage.fileName); // 새로운 이미지 파일 이름 콘솔에 출력
                 setImage({uri: selectedImage.uri});
               }
             }),
@@ -94,62 +108,73 @@ const EditScreen = ({route}) => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!title || !image || !repairCost || !content) {
-      Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-
-      // boardSaveRequestDto 데이터를 JSON 문자열로 추가
-      const dto = {
-        title,
-        cost: repairCost,
-        comment: content,
-      };
-      formData.append('boardSaveRequestDto', JSON.stringify(dto));
-
-      // 이미지 데이터 추가
-      formData.append('image', {
-        uri: image.uri,
-        name: image.fileName,
-        type: image.type,
-      });
-      console.log(formData);
-
-      const response = await axios.post(
-        'http://localhost:8080/board/save',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${storedToken}`,
-          },
-        },
-      );
-      console.log('Response:', response.data);
-
-      // 글 작성 완료 후 작업을 수행할 수 있습니다.
-      navigation.navigate('Board');
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('오류', '글 작성 중 오류가 발생했습니다.');
-    }
-  };
-
-  const handleCheckIconPress = () => {
+  const handleCheckIconPress = async () => {
+    // 수정 완료 여부를 사용자에게 확인
     Alert.alert(
-      '글 작성 완료',
+      '수정 완료',
       '수정을 완료하시겠습니까?',
       [
-        {text: '취소', style: 'cancel'},
-        {text: '확인', onPress: handleSubmit},
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '확인',
+          onPress: async () => {
+            try {
+              // 수정 요청을 서버에 보냄
+              if (!image) {
+                Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
+                return;
+              }
+
+              // 쉼표(,)를 제거한 수리비 값
+              const cleanedRepairCost = boardRepairCost.replace(/,/g, '');
+
+              const formData = new FormData();
+              formData.append(
+                'boardDto',
+                JSON.stringify({
+                  title: boardTitle,
+                  cost: cleanedRepairCost,
+                  comment: boardContent,
+                }),
+              );
+              formData.append('image', {
+                uri: image.uri,
+                name: 'image.jpg', // 임의의 이미지 파일 이름
+                type: 'image/jpeg', // 이미지 타입에 따라 수정 필요
+              });
+
+              console.log('보낼 데이터:', formData); // 데이터 확인용 로그
+
+              const response = await axios.put(
+                `http://localhost:8080/board/${boardId}/edit`,
+                formData,
+                {
+                  headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${storedToken}`,
+                  },
+                },
+              );
+
+              console.log('Response:', response.data);
+              navigation.navigate('Board'); // 게시판 화면으로 이동
+            } catch (error) {
+              console.error('Error:', error);
+              Alert.alert('오류', '게시글 수정 중 오류가 발생했습니다.');
+            }
+          },
+        },
       ],
       {cancelable: false},
     );
   };
+  useEffect(() => {
+    // imageUrl이 변경될 때마다 imageUri 업데이트
+    setImageUri(imageUrl);
+  }, [imageUrl]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -172,7 +197,7 @@ const EditScreen = ({route}) => {
           <TextInput
             style={styles.input}
             placeholder="제목을 입력하세요 (최대 15글자)"
-            value={boardData?.title}
+            value={boardTitle}
             onChangeText={text => {
               // 입력된 텍스트에서 공백을 제거하고 15글자까지 자르기
               const trimmedText = text.trim().substring(0, 15);
@@ -183,7 +208,7 @@ const EditScreen = ({route}) => {
                   '제목은 최대 15글자까지 입력 가능합니다.',
                 );
               } else {
-                setTitle(trimmedText);
+                setBoardTitle(trimmedText);
               }
             }}
           />
@@ -194,24 +219,21 @@ const EditScreen = ({route}) => {
 
           <TouchableOpacity
             style={styles.imageContainer}
-            onPress={viewImageFullScreen}>
+            onPress={handleChoosePhoto}>
             <Text style={styles.imageText}>첨부된 사진:</Text>
-            {image && (
-              <Image
-                source={{
-                  uri: `http://localhost:8080/image/boardImages/${image.uri}`,
-                }}
-                style={[styles.previewImage, {alignSelf: 'center'}]}
-              />
-            )}
           </TouchableOpacity>
-
+          <TouchableOpacity onPress={viewImageFullScreen}>
+            <Image
+              source={image}
+              style={[styles.previewImage, {alignSelf: 'center'}]}
+            />
+          </TouchableOpacity>
           <View style={styles.repairCostContainer}>
             <TextInput
               style={[styles.input, styles.repairCostInput]}
               placeholder="수리비는 얼마가 나왔나요?"
-              value={boardData?.cost}
-              onChangeText={setRepairCost}
+              value={boardRepairCost}
+              onChangeText={setBoardRepairCost}
               keyboardType="numeric"
             />
             <Text style={styles.currencyText}>원</Text>
@@ -219,8 +241,8 @@ const EditScreen = ({route}) => {
 
           <TextInput
             style={[styles.input, styles.multiLineInput]}
-            value={boardData?.comment}
-            onChangeText={setContent}
+            value={boardContent}
+            onChangeText={setBoardContent}
             placeholder="내용을 입력하세요"
             multiline
             textAlignVertical="top"

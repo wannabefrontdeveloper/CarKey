@@ -11,10 +11,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import {useResponse} from './ResponseContext';
 import {useState} from 'react';
+import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const MoneyAnalysis = () => {
   const navigation = useNavigation();
   const {responseData} = useResponse(); // ResponseContext 사용
+  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  console.log('토큰 값:', storedToken); // 토큰 값 콘솔 출력
   console.log('서버에서 받은 데이터:', responseData);
 
   const [isSaved, setIsSaved] = useState(false);
@@ -24,21 +27,60 @@ const MoneyAnalysis = () => {
   };
 
   const handleSaveAnalysis = () => {
-    Alert.alert(
-      '저장 성공',
-      '저장이 완료되었습니다! \n\n저장하신 내역은 마이페이지 내 분석 내역 조회 메뉴에서 조회 가능합니다. ',
-      [
-        {
-          text: '확인',
-          onPress: () => {
-            setIsSaved(true);
-            console.log('저장 완료');
-          },
-          style: 'cancel',
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
+        cancelable: true,
+      });
+    } else {
+      // 서버로 전송할 데이터 생성
+      const analysisData = {
+        // 이 부분은 실제 서버에서 요구하는 필드에 맞춰서 수정해야 합니다.
+        originalImg: responseData.data.originalImg,
+        scratchImg: responseData.data.scratchImg,
+        crushedImg: responseData.data.crushedImg,
+        totalPrice: responseData.data.totalPrice,
+        // 필요한 다른 데이터 필드 추가
+      };
+
+      console.log('서버로 전송되는 데이터:', analysisData);
+
+      fetch('http://localhost:8080/user/analyze/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${storedToken}`,
         },
-      ],
-      {cancelable: false},
-    );
+        body: JSON.stringify(analysisData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success === 'True') {
+            Alert.alert(
+              '저장 성공',
+              '저장이 완료되었습니다! \n\n저장하신 내역은 마이페이지 내 분석 내역 조회 메뉴에서 조회 가능합니다.',
+              [
+                {
+                  text: '확인',
+                  onPress: () => {
+                    setIsSaved(true);
+                    console.log('저장 완료:', data);
+                  },
+                  style: 'cancel',
+                },
+              ],
+              {cancelable: false},
+            );
+          } else {
+            // 실패 처리
+            Alert.alert('저장 실패', '저장에 실패했습니다. 다시 시도해주세요.');
+          }
+        })
+        .catch(error => {
+          console.error('저장 오류:', error);
+          Alert.alert('저장 오류', '저장 과정에서 오류가 발생했습니다.');
+        });
+    }
   };
 
   return (

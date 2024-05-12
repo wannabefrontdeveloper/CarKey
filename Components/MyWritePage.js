@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useToken} from './TokenContext';
 import axios from 'axios';
 
-const Board = () => {
+const MyWritePage = () => {
   const [boardData, setBoardData] = useState([]);
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,7 +54,7 @@ const Board = () => {
     }
   };
 
-  const ListItem = ({title, username, date, text, recommendCount}) => {
+  const ListItem = ({title, username, date, text, boardId, recommendCount}) => {
     // date를 JavaScript Date 객체로 파싱
     const parsedDate = new Date(date);
 
@@ -71,11 +71,14 @@ const Board = () => {
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
       navigation.navigate('DetailScreen', {
+        title,
         username,
         date,
         text,
+        boardId,
         recommendCount,
       });
+      console.log('Clicked on boardId:', boardId);
     };
 
     return (
@@ -93,8 +96,7 @@ const Board = () => {
       </TouchableOpacity>
     );
   };
-
-  // 페이지 버튼 생성 함수
+  // 페이지 버튼 렌더링 함수
   const renderPageButton = pageNumber => (
     <TouchableOpacity
       key={pageNumber}
@@ -109,7 +111,7 @@ const Board = () => {
 
   // 페이지 버튼 리스트 생성
   const renderPageButtons = () => {
-    const pageCount = Math.ceil(items.length / itemsPerPage);
+    const pageCount = Math.ceil(boardData.length / itemsPerPage);
     const pageButtons = [];
     for (let i = 1; i <= pageCount; i++) {
       pageButtons.push(renderPageButton(i));
@@ -141,6 +143,7 @@ const Board = () => {
             date={item.postDate}
             text={item.text}
             recommendCount={item.recommendCount}
+            boardId={item.boardId}
           />
         )}
         keyExtractor={(item, index) => index.toString()}
@@ -229,4 +232,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Board;
+export default MyWritePage;

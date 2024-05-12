@@ -4,11 +4,13 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {useToken} from './TokenContext';
 import {useResponse} from './ResponseContext';
+import {Alert} from 'react-native';
 
 const AnalysisFirst = ({route}) => {
   const {photo} = route.params;
   const navigation = useNavigation();
   const {storedToken} = useToken();
+  console.log('현재 토큰값:', storedToken);
   const {updateResponseData} = useResponse(); // ResponseContext 사용
 
   useEffect(() => {
@@ -25,6 +27,7 @@ const AnalysisFirst = ({route}) => {
         type: 'image/jpeg',
       });
 
+      console.log('Request Data:', formData);
       navigation.navigate('Loading');
       const response = await axios.post(
         'http://localhost:8080/user/analyze/cost',
@@ -39,13 +42,31 @@ const AnalysisFirst = ({route}) => {
 
       console.log('Response:', response.data);
 
-      // 서버 응답 값을 ResponseProvider를 통해 공유
-      updateResponseData(response.data);
-
-      // 분석 결과에 따라 다음 화면으로 이동하거나 작업 수행
-    } catch (error) {
-      console.error('분석 요청 중 오류 발생:', error);
-    }
+      if (response.data.success === 'False') {
+        // 분석 실패 시 알림창 띄우기
+        Alert.alert(
+          '분석 실패',
+          'AI가 분석에 실패하였습니다. 다시 촬영해주세요!',
+          [
+            {
+              text: '홈으로 이동',
+              onPress: () => navigation.navigate('Board'),
+              style: 'cancel',
+            },
+            {
+              text: '다시 촬영',
+              onPress: () => navigation.navigate('CameraScreen'),
+            },
+          ],
+        );
+        navigation.navigate('Board');
+      } else {
+        // 성공적으로 분석이 완료된 경우
+        // 서버 응답 값을 ResponseProvider를 통해 공유
+        updateResponseData(response.data);
+        // 분석 결과에 따라 다음 화면으로 이동하거나 작업 수행
+      }
+    } catch (error) {}
   };
 
   const navigateToCameraScreen = () => {
