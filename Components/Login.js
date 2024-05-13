@@ -46,7 +46,7 @@ const Login = ({navigation}) => {
     }
 
     axios
-      .post('http://localhost:8080/user/login', {
+      .post('http://ceprj.gachon.ac.kr:60020/user/login', {
         loginId: email,
         password: password,
       })

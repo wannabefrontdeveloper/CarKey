@@ -96,7 +96,7 @@ const NewPost = () => {
       console.log(formData);
 
       const response = await axios.post(
-        'http://localhost:8080/board/save',
+        'http://ceprj.gachon.ac.kr:60020/board/save',
         formData,
         {
           headers: {

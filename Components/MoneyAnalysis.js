@@ -45,7 +45,7 @@ const MoneyAnalysis = () => {
 
       console.log('서버로 전송되는 데이터:', analysisData);
 
-      fetch('http://localhost:8080/user/analyze/save', {
+      fetch('http://ceprj.gachon.ac.kr:60020/user/analyze/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const MoneyAnalysis = () => {
       </View>
       <Image
         source={{
-          uri: `http://localhost:8080/image/ai/original/${responseData.data.originalImg}`,
+          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${responseData.data.originalImg}`,
         }}
         style={styles.mapImage}
       />

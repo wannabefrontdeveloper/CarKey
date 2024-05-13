@@ -30,7 +30,7 @@ const ChangeEmail = () => {
     try {
       // 이메일 중복 체크 API 호출
       const checkDuplicateResponse = await axios.post(
-        'http://localhost:8080/user/loginId/exists',
+        'http://ceprj.gachon.ac.kr:60020/user/loginId/exists',
         {loginId: email},
       );
 
@@ -40,7 +40,7 @@ const ChangeEmail = () => {
       } else {
         // 이메일 중복이 없는 경우 이메일 변경 요청 API 호출
         const changeEmailResponse = await axios.put(
-          'http://localhost:8080/user/mypage/infoChange/loginId',
+          'http://ceprj.gachon.ac.kr:60020/user/mypage/infoChange/loginId',
           {newLoginId: email},
           {
             headers: {

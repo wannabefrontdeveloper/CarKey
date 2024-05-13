@@ -37,7 +37,7 @@ const MyPage = () => {
   const fetchUserInfo = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:8080/mypage/user/info',
+        'http://ceprj.gachon.ac.kr:60020/mypage/user/info',
         {
           headers: {
             Authorization: `Bearer ${storedToken}`, // 토큰을 헤더에 포함

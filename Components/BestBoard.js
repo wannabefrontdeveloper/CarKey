@@ -72,7 +72,7 @@ const BestBoard = () => {
     try {
       console.log('Fetching board data...');
       const response = await axios.get(
-        'http://localhost:8080/board/bestboard/list',
+        'http://ceprj.gachon.ac.kr:60020/board/bestboard/list',
       );
       console.log('Board data fetched successfully:', response.data);
       // 서버에서 받아온 데이터를 state에 설정

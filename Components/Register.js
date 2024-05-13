@@ -52,7 +52,7 @@ const Register = ({navigation}) => {
     }
 
     axios
-      .post('http://localhost:8080/user/signup', {
+      .post('http://ceprj.gachon.ac.kr:60020/user/signup', {
         loginId: email,
         password: password,
         nickName: nickname,
@@ -90,7 +90,9 @@ const Register = ({navigation}) => {
     } else {
       // 이메일 값을 서버로 전달하여 중복 확인 요청
       axios
-        .post('http://localhost:8080/user/loginId/exists', {loginId: email})
+        .post('http://ceprj.gachon.ac.kr:60020/user/loginId/exists', {
+          loginId: email,
+        })
         .then(response => {
           const {data} = response;
           if (data.success === 'true') {
@@ -119,7 +121,7 @@ const Register = ({navigation}) => {
     } else {
       // 닉네임 값을 서버로 전달하여 중복 확인 요청
       axios
-        .post('http://localhost:8080/user/nickName/exists', {
+        .post('http://ceprj.gachon.ac.kr:60020/user/nickName/exists', {
           nickName: nickname,
         })
         .then(response => {

@@ -63,7 +63,9 @@ const Board = () => {
   const fetchBoardData = async () => {
     try {
       console.log('Fetching board data...');
-      const response = await axios.get('http://localhost:8080/board/list');
+      const response = await axios.get(
+        'http://ceprj.gachon.ac.kr:60020/board/list',
+      );
       console.log('Board data fetched successfully:', response.data);
       // 서버에서 받아온 데이터를 state에 설정
       setBoardData(response.data.data);

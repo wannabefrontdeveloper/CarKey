@@ -67,7 +67,7 @@ const FeedbackScreen = () => {
       console.log(formData);
 
       const response = await axios.post(
-        'http://localhost:8080/mypage/feedback/save',
+        'http://ceprj.gachon.ac.kr:60020/mypage/feedback/save',
         formData,
         {
           headers: {

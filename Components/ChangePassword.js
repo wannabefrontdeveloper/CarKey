@@ -59,7 +59,7 @@ const ChangePasswordScreen = () => {
 
       // 백엔드로 PUT 요청 보내기
       const response = await axios.put(
-        'http://localhost:8080/user/mypage/infoChange/password',
+        'http://ceprj.gachon.ac.kr:60020/user/mypage/infoChange/password',
         data, // data 객체 전달
       );
 

@@ -24,7 +24,7 @@ const DentAnalysis = () => {
       </View>
       <Image
         source={{
-          uri: `http://localhost:8080/image/ai/crushed/${responseData.data.crushedImg}`,
+          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/crushed/${responseData.data.crushedImg}`,
         }}
         style={styles.mapImage}
       />

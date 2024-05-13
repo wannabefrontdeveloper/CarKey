@@ -43,7 +43,7 @@ const ChangeNickname = () => {
     try {
       // 닉네임 중복 체크 API 호출
       const checkDuplicateResponse = await axios.post(
-        'http://localhost:8080/user/nickName/exists',
+        'http://ceprj.gachon.ac.kr:60020/user/nickName/exists',
         {nickName: nickname},
       );
       console.log('닉네임 중복 체크 데이터:', {nickName: nickname});
@@ -55,7 +55,7 @@ const ChangeNickname = () => {
       } else {
         // 닉네임 중복이 없는 경우 닉네임 변경 요청 API 호출
         const changeNicknameResponse = await axios.put(
-          'http://localhost:8080/user/mypage/infoChange/nickName',
+          'http://ceprj.gachon.ac.kr:60020/user/mypage/infoChange/nickName',
           {nickName: nickname},
           {
             headers: {

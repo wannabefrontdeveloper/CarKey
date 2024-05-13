@@ -36,7 +36,7 @@ const MyWritePage = () => {
     try {
       console.log('Fetching board data...');
       const response = await axios.get(
-        'http://localhost:8080/user/mypage/boardList',
+        'http://ceprj.gachon.ac.kr:60020/user/mypage/boardList',
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,

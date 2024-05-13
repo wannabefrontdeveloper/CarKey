@@ -30,7 +30,7 @@ const AnalysisFirst = ({route}) => {
       console.log('Request Data:', formData);
       navigation.navigate('Loading');
       const response = await axios.post(
-        'http://localhost:8080/user/analyze/cost',
+        'https://ceprj.gachon.ac.kr:60020//user/analyze/cost',
         formData,
         {
           headers: {

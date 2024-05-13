@@ -38,7 +38,7 @@ const DamageReportView = () => {
   const fetchDistinctAnalyzeDates = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:8080/user/mypage/analyze',
+        'http://ceprj.gachon.ac.kr:60020/user/mypage/analyze',
         {
           headers: {
             Authorization: `Bearer ${storedToken}`, // 토큰을 헤더에 포함
@@ -56,7 +56,7 @@ const DamageReportView = () => {
   const fetchAnalysisListForDate = async date => {
     try {
       const response = await axios.post(
-        'http://localhost:8080/user/mypage/analyze/list',
+        'http://ceprj.gachon.ac.kr:60020/user/mypage/analyze/list',
         {
           analyzeDate: date, // 선택된 날짜 전송
         },
@@ -162,12 +162,12 @@ const DamageReportView = () => {
                 <TouchableOpacity
                   onPress={() =>
                     handleImageClick(
-                      `http://localhost:8080/image/ai/original/${analysis.originalImg}`,
+                      `http://ceprj.gachon.ac.kr:60020/image/ai/original/${analysis.originalImg}`,
                     )
                   }>
                   <Image
                     source={{
-                      uri: `http://localhost:8080/image/ai/original/${analysis.originalImg}`,
+                      uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${analysis.originalImg}`,
                     }}
                     style={styles.image}
                   />

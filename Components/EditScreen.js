@@ -35,7 +35,7 @@ const EditScreen = ({route}) => {
   const [boardRepairCost, setBoardRepairCost] = useState('');
   const fetchBoard = async () => {
     try {
-      const url = `http://localhost:8080/board/${boardId}`;
+      const url = `http://ceprj.gachon.ac.kr:60020/board/${boardId}`;
       const response = await axios.get(url);
       setBoardData(response.data.data); // 서버에서 받은 데이터를 boardData에 저장
       console.log('서버에서 받은 데이터:', response.data);
@@ -149,7 +149,7 @@ const EditScreen = ({route}) => {
               console.log('보낼 데이터:', formData); // 데이터 확인용 로그
 
               const response = await axios.put(
-                `http://localhost:8080/board/${boardId}/edit`,
+                `http://ceprj.gachon.ac.kr:60020/board/${boardId}/edit`,
                 formData,
                 {
                   headers: {

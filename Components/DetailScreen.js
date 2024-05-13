@@ -64,7 +64,7 @@ const DetailScreen = ({route}) => {
     try {
       // 해당 게시글이 현재 사용자의 것인지 확인하는 요청을 보냄
       const checkResponse = await axios.get(
-        `http://localhost:8080/board/${boardId}/check`,
+        `http://ceprj.gachon.ac.kr:60020/board/${boardId}/check`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -89,7 +89,7 @@ const DetailScreen = ({route}) => {
                 try {
                   // 삭제 요청 보내기
                   const response = await axios.delete(
-                    `http://localhost:8080/admin/board/${boardId}`,
+                    `http://ceprj.gachon.ac.kr:60020/admin/board/${boardId}`,
                     {
                       headers: {
                         Authorization: `Bearer ${storedToken}`,
@@ -129,7 +129,7 @@ const DetailScreen = ({route}) => {
     try {
       // 해당 게시글이 현재 사용자의 것인지 확인하는 요청을 보냄
       const checkResponse = await axios.get(
-        `http://localhost:8080/board/${boardId}/check`,
+        `http://ceprj.gachon.ac.kr:60020/board/${boardId}/check`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -146,7 +146,7 @@ const DetailScreen = ({route}) => {
         navigation.navigate('EditScreen', {
           boardId, // 수정할 게시글의 boardId 전달
           imageUrl: boardData.imgPath
-            ? `http://localhost:8080/image/boardImages/${boardData.imgPath}`
+            ? `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`
             : null,
         });
       } else {
@@ -163,7 +163,7 @@ const DetailScreen = ({route}) => {
 
   const fetchBoard = async () => {
     try {
-      const url = `http://localhost:8080/board/${boardId}`;
+      const url = `http://ceprj.gachon.ac.kr:60020/board/${boardId}`;
       const response = await axios.get(url);
       setBoardData(response.data.data); // 서버에서 받은 데이터를 boardData에 저장
       console.log('서버에서 받은 데이터:', response.data);
@@ -205,40 +205,52 @@ const DetailScreen = ({route}) => {
   };
 
   const handleCommentSubmit = async () => {
-    if (comment.trim() === '') {
-      // 입력된 댓글이 없는 경우
-      Alert.alert('알림', '댓글을 입력해주세요!');
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert(
+        '알림',
+        '로그인한 회원만 댓글을 달 수 있습니다.',
+        [{text: '확인'}],
+        {
+          cancelable: true,
+        },
+      );
     } else {
-      try {
-        const response = await axios.post(
-          `http://localhost:8080/replies/${boardId}`,
-          {comment: comment}, // 댓글 내용을 서버로 전송
-          {
-            headers: {
-              Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+      if (comment.trim() === '') {
+        // 입력된 댓글이 없는 경우
+        Alert.alert('알림', '댓글을 입력해주세요!');
+      } else {
+        try {
+          const response = await axios.post(
+            `http://ceprj.gachon.ac.kr:60020/replies/${boardId}`,
+            {comment: comment}, // 댓글 내용을 서버로 전송
+            {
+              headers: {
+                Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+              },
             },
-          },
-        );
-        if (response.data.success) {
-          // 서버에서 true를 반환한 경우
-          Alert.alert('알림', '댓글 작성을 완료했습니다.');
-          console.log(response.data);
-          // 서버로부터 반환된 댓글 데이터를 받아와 상태에 추가
-          const newComment = response.data.data; // 서버로부터 반환된 댓글 데이터
-          setComments(prevComments => [...prevComments, newComment]); // 상태에 새로운 댓글 추가
+          );
+          if (response.data.success) {
+            // 서버에서 true를 반환한 경우
+            Alert.alert('알림', '댓글 작성을 완료했습니다.');
+            console.log(response.data);
+            // 서버로부터 반환된 댓글 데이터를 받아와 상태에 추가
+            const newComment = response.data.data; // 서버로부터 반환된 댓글 데이터
+            setComments(prevComments => [...prevComments, newComment]); // 상태에 새로운 댓글 추가
 
-          // 댓글을 추가한 후에 데이터를 다시 불러와서 화면을 업데이트
-          fetchBoard();
-        } else {
-          // 서버에서 false를 반환한 경우
-          Alert.alert('알림', '댓글 작성에 실패했습니다.');
+            // 댓글을 추가한 후에 데이터를 다시 불러와서 화면을 업데이트
+            fetchBoard();
+          } else {
+            // 서버에서 false를 반환한 경우
+            Alert.alert('알림', '댓글 작성에 실패했습니다.');
+          }
+        } catch (error) {
+          console.error('댓글 작성 중 오류 발생:', error);
+          Alert.alert('오류', '댓글 작성 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('댓글 작성 중 오류 발생:', error);
-        Alert.alert('오류', '댓글 작성 중 오류가 발생했습니다.');
+        setComment(''); // 댓글 입력 창 초기화
+        Keyboard.dismiss(); // 키보드 숨기기
       }
-      setComment(''); // 댓글 입력 창 초기화
-      Keyboard.dismiss(); // 키보드 숨기기
     }
   };
 
@@ -260,7 +272,7 @@ const DetailScreen = ({route}) => {
 
         // replyUserCheck API를 호출하여 댓글 소유자인지 확인합니다.
         const response = await axios.get(
-          `http://localhost:8080/replies/${comment.replyId}/check`,
+          `http://ceprj.gachon.ac.kr:60020/replies/${comment.replyId}/check`,
           {
             headers: headers,
           },
@@ -332,7 +344,7 @@ const DetailScreen = ({route}) => {
 
   const deleteComment = replyId => {
     axios
-      .delete(`http://localhost:8080/replies/${replyId}`)
+      .delete(`http://ceprj.gachon.ac.kr:60020/replies/${replyId}`)
       .then(response => {
         // 삭제 요청이 성공했을 때 실행할 코드
         fetchBoard();
@@ -361,7 +373,7 @@ const DetailScreen = ({route}) => {
     try {
       console.log('수정할 댓글의 replyId:', replyId);
       const response = await axios.post(
-        `http://localhost:8080/replies/${replyId}/edit`,
+        `http://ceprj.gachon.ac.kr:60020/replies/${replyId}/edit`,
         {comment: editCommentText},
         {
           headers: {
@@ -391,7 +403,7 @@ const DetailScreen = ({route}) => {
       };
 
       const response = await axios.post(
-        `http://localhost:8080/board/${boardId}/recommend`,
+        `http://ceprj.gachon.ac.kr:60020/board/${boardId}/recommend`,
         null,
         config,
       );
@@ -463,7 +475,7 @@ const DetailScreen = ({route}) => {
             {boardData && boardData.imgPath && (
               <Image
                 source={{
-                  uri: `http://localhost:8080/image/boardImages/${boardData.imgPath}`,
+                  uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
                 }}
                 style={styles.picture}
               />
@@ -535,7 +547,7 @@ const DetailScreen = ({route}) => {
             {boardData && boardData.imgPath ? (
               <Image
                 source={{
-                  uri: `http://localhost:8080/image/boardImages/${boardData.imgPath}`,
+                  uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
                 }}
                 style={styles.modalImage}
               />

@@ -29,7 +29,7 @@ const ScratchAnalysis = () => {
       </View>
       <Image
         source={{
-          uri: `http://localhost:8080/image/ai/scratch/${responseData.data.scratchImg}`,
+          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/scratch/${responseData.data.scratchImg}`,
         }}
         style={styles.mapImage}
       />

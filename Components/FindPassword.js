@@ -36,9 +36,12 @@ const FindPassword = () => {
 
     try {
       // 백엔드로 POST 요청 보내기
-      const response = await axios.post('http://localhost:8080/user/findpwd', {
-        loginId: email, // 이메일을 보냅니다. loginId는 백엔드에서 필요한 필드 이름으로 바꿔주세요.
-      });
+      const response = await axios.post(
+        'http://ceprj.gachon.ac.kr:60020/user/findpwd',
+        {
+          loginId: email, // 이메일을 보냅니다. loginId는 백엔드에서 필요한 필드 이름으로 바꿔주세요.
+        },
+      );
 
       // 응답 처리
       console.log(response.data); // 응답에 유용한 데이터가 있다고 가정합니다.

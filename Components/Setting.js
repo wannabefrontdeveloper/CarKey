@@ -42,7 +42,7 @@ const Setting = () => {
           onPress: async () => {
             try {
               const response = await axios.delete(
-                'http://localhost:8080/user/mypage/delete',
+                'http://ceprj.gachon.ac.kr:60020/user/delete',
                 {
                   headers: {
                     Authorization: `Bearer ${storedToken}`, // 헤더에 토큰값 추가
