@@ -1703,6 +1703,11 @@
   dependencies:
     invariant "^2.2.4"
 
+"@react-native-community/image-editor@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/image-editor/-/image-editor-4.2.0.tgz#5b7d5d56ca6170991cdeecc36ee2714cde1e2438"
+  integrity sha512-awyoOwElkAI+jrXxhm1kicXIKJXUnq8hE4RRdFs8HkCAdCOjNtAQPRneD+eHe9pOGKuX2h8sqgIJKqMv9wnwqw==
+
 "@react-native-picker/picker@^2.7.5":
   version "2.7.5"
   resolved "https://registry.yarnpkg.com/@react-native-picker/picker/-/picker-2.7.5.tgz#e43fcd65f260fa4f23e974ccb9fb7c1f7a9ff94a"

@@ -22,12 +22,14 @@ const DentAnalysis = () => {
       <View style={styles.navbar}>
         <Text style={styles.navbarText}>덴트 분석 결과</Text>
       </View>
-      <Image
-        source={{
-          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/crushed/${responseData.data.crushedImg}`,
-        }}
-        style={styles.mapImage}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: `http://ceprj.gachon.ac.kr:60020/image/ai/crushed/${responseData.data.crushedImg}`,
+          }}
+          style={styles.mapImage}
+        />
+      </View>
       <View style={styles.analysisSection}>
         <Icon name="child-care" size={60} color="#000" />
         <View style={styles.balloon}>
@@ -57,39 +59,63 @@ const DentAnalysis = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   navbar: {
     height: 70,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4d91da',
     paddingHorizontal: 10,
-    marginBottom: 100,
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 50,
+    fontSize: 24,
     fontWeight: 'bold',
   },
+  imageContainer: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
   mapImage: {
-    width: 400,
-    height: 400,
+    width: '80%',
+    height: '80%',
     resizeMode: 'contain',
-    marginLeft: 5,
-    marginBottom: 100,
+  },
+  analysisSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+    paddingHorizontal: 10,
+  },
+  analysisText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  balloon: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignSelf: 'stretch',
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    marginVertical: 20,
   },
   button: {
     backgroundColor: '#82888f',
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -98,29 +124,12 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     color: 'white',
-  },
-  analysisSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -40,
-    marginBottom: 29,
-  },
-  analysisText: {
-    marginLeft: 10,
-    fontSize: 25,
-    color: '#000',
-  },
-  balloon: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginLeft: 10,
   },
 });
 

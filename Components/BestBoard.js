@@ -7,8 +7,6 @@ import {
   TouchableOpacity,
   Alert,
   BackHandler,
-  Image,
-  ScrollView,
   RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,8 +22,6 @@ const BestBoard = () => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 관리할 상태(State) 추가
   const itemsPerPage = 7; // 페이지당 항목 수
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
-
-  const items = [];
 
   // 화면 포커스 시 데이터 새로고침
   useFocusEffect(
@@ -85,10 +81,6 @@ const BestBoard = () => {
     }
   };
 
-  const navigateToBestBoard = () => {
-    navigation.navigate('BestBoard');
-  };
-
   const navigateToMyPage = () => {
     // 여기서 토큰값을 확인하고 그에 따른 동작을 수행합니다.
 
@@ -121,11 +113,6 @@ const BestBoard = () => {
 
   const navigateToBoard = () => {
     navigation.navigate('Board');
-  };
-
-  const navigateToDetail = () => {
-    // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
-    navigation.navigate('DetailScreen', {username, date, title, text, picture});
   };
 
   const handleCameraPress = () => {
@@ -170,17 +157,16 @@ const BestBoard = () => {
       });
       console.log('Clicked on boardId:', boardId);
     };
+
     return (
-      <TouchableOpacity onPress={navigateToDetail}>
-        <View style={styles.listItem}>
+      <TouchableOpacity onPress={navigateToDetail} style={styles.listItem}>
+        <View>
           <Text style={styles.listItemTitle}>{title}</Text>
-          <View style={styles.userInfoContainer}>
-            <Text style={styles.listItemUsername}>{nickName}</Text>
-            <Text style={styles.listItemDate}>{formattedDate}</Text>
-            <Text style={styles.listItemRecommend}>
-              추천수: {recommendCount}
-            </Text>
-          </View>
+        </View>
+        <View style={styles.userInfoContainer}>
+          <Text style={styles.listItemUsername}>{nickName}</Text>
+          <Text style={styles.listItemDate}>{formattedDate}</Text>
+          <Text style={styles.listItemRecommend}>추천수: {recommendCount}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -286,10 +272,9 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#4d91da',
   },
-  button: {},
   navbarText: {
     color: '#ffffff',
-    fontSize: 35,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   iconContainer: {
@@ -316,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   listItemTitle: {
-    fontSize: 25,
+    fontSize: 20,
   },
   pageButton: {
     paddingHorizontal: 15, // 좌우 padding 추가

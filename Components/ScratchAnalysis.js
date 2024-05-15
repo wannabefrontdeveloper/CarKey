@@ -12,8 +12,6 @@ const ScratchAnalysis = () => {
     console.log('Analysis Data:', responseData);
   }, [responseData]);
 
-  // 이미지나 텍스트에 대한 이벤트 핸들러를 필요에 따라 여기에 정의합니다.
-
   const navigateToCameraScreen = () => {
     navigation.navigate('CameraScreen');
   };
@@ -27,12 +25,14 @@ const ScratchAnalysis = () => {
       <View style={styles.navbar}>
         <Text style={styles.navbarText}>스크래치 분석 결과</Text>
       </View>
-      <Image
-        source={{
-          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/scratch/${responseData.data.scratchImg}`,
-        }}
-        style={styles.mapImage}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: `http://ceprj.gachon.ac.kr:60020/image/ai/scratch/${responseData.data.scratchImg}`,
+          }}
+          style={styles.mapImage}
+        />
+      </View>
       <View style={styles.analysisSection}>
         <Icon name="child-care" size={60} color="#000" />
         <View style={styles.balloon}>
@@ -62,45 +62,63 @@ const ScratchAnalysis = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   navbar: {
     height: 70,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4d91da',
     paddingHorizontal: 10,
-    marginBottom: 100,
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 50,
+    fontSize: 24,
     fontWeight: 'bold',
   },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'black',
-    margin: 10,
+  imageContainer: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
   },
   mapImage: {
-    width: 400,
-    height: 400,
+    width: '80%',
+    height: '80%',
     resizeMode: 'contain',
-    marginLeft: 5,
-    marginBottom: 100,
+  },
+  analysisSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+    paddingHorizontal: 10,
+  },
+  analysisText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  balloon: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignSelf: 'stretch',
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    marginVertical: 20,
   },
   button: {
     backgroundColor: '#82888f',
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -109,29 +127,12 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     color: 'white',
-  },
-  analysisSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -40,
-    marginBottom: 29,
-  },
-  analysisText: {
-    marginLeft: 10,
-    fontSize: 25,
-    color: '#000',
-  },
-  balloon: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginLeft: 10,
   },
 });
 

@@ -79,7 +79,6 @@ const DamageReportView = () => {
   };
 
   console.log('analysisData:', analysisData);
-  console.log('analysisForSelectedDate:', analysisForSelectedDate);
 
   const getAnalysisForSelectedDate = () => {
     // analysisData가 비어있지 않은 경우 해당 날짜 데이터 검색
@@ -212,6 +211,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200, // 원하는 높이로 조절
     resizeMode: 'contain',
+    transform: [{rotate: '90deg'}], // Rotate the image by 90 degrees
   },
   text: {
     fontSize: 16,

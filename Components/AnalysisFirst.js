@@ -1,17 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {useToken} from './TokenContext';
 import {useResponse} from './ResponseContext';
-import {Alert} from 'react-native';
 
 const AnalysisFirst = ({route}) => {
   const {photo} = route.params;
   const navigation = useNavigation();
   const {storedToken} = useToken();
-  console.log('현재 토큰값:', storedToken);
-  const {updateResponseData} = useResponse(); // ResponseContext 사용
+  const {updateResponseData} = useResponse();
 
   useEffect(() => {
     console.log('전달된 사진 데이터:', photo);
@@ -42,7 +47,6 @@ const AnalysisFirst = ({route}) => {
       console.log('Response:', response.data);
 
       if (response.data.success === 'False') {
-        // 분석 실패 시 알림창 띄우기
         Alert.alert(
           '분석 실패',
           'AI가 분석에 실패하였습니다. 다시 촬영해주세요!',
@@ -60,13 +64,11 @@ const AnalysisFirst = ({route}) => {
         );
         navigation.navigate('Board');
       } else {
-        // 성공적으로 분석이 완료된 경우
-        // 서버 응답 값을 ResponseProvider를 통해 공유
-        console.log('Response:', response.data);
         updateResponseData(response.data);
-        // 분석 결과에 따라 다음 화면으로 이동하거나 작업 수행
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error during analysis:', error);
+    }
   };
 
   const navigateToCameraScreen = () => {
@@ -96,29 +98,32 @@ const AnalysisFirst = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#f5f5f5',
+    paddingTop: 100, // Add padding to move content down
   },
   imageContainer: {
-    flex: 1,
+    flex: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   image: {
-    width: 400,
-    height: 400,
+    width: '80%',
+    height: '80%',
+    resizeMode: 'contain',
   },
   text: {
-    fontSize: 35,
+    fontSize: 24,
     color: 'black',
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   buttonContainer: {
-    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: '5%',
   },
   button: {
     width: '100%',

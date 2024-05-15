@@ -20,7 +20,7 @@ const ImageFullScreen = ({route}) => {
       </TouchableOpacity>
       <Image
         source={{uri: imageUri}}
-        style={{flex: 1, resizeMode: 'contain'}}
+        style={{flex: 1, resizeMode: 'contain', transform: [{rotate: '90deg'}]}}
       />
     </View>
   );

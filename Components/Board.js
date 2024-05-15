@@ -277,58 +277,41 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#4d91da',
   },
-  button: {},
   navbarText: {
     color: '#ffffff',
-    fontSize: 35,
+    fontSize: 20,
     fontWeight: 'bold',
-  },
-  iconContainer: {
-    padding: 5,
   },
   listItemText: {
     fontSize: 20,
     flex: 1,
   },
-  listItemUsername: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  listItemDate: {
-    fontSize: 12,
-    color: '#888888',
-  },
-  listItemRecommend: {
-    fontSize: 14,
-    color: '#888888',
-  },
   userInfoContainer: {
     alignItems: 'flex-end',
   },
   listItemTitle: {
-    fontSize: 25,
+    fontSize: 20,
   },
   pageButton: {
-    paddingHorizontal: 15, // 좌우 padding 추가
-    paddingVertical: 8, // 상하 padding 추가
-    marginHorizontal: 1, // 좌우 margin 추가
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginHorizontal: 1,
     backgroundColor: '#8fa1b4',
     borderRadius: 5,
     alignItems: 'center',
     marginBottom: 10,
   },
   currentPageButton: {
-    backgroundColor: '#4d91da', // 현재 페이지 버튼의 배경색 변경
+    backgroundColor: '#4d91da',
   },
   pageButtonText: {
-    fontSize: 16, // 버튼 텍스트 크기 조정
+    fontSize: 16,
     color: '#f7f2f2',
   },
   pageButtonsContainer: {
-    flexDirection: 'row', // 페이지 버튼들을 가로로 배열하기 위해 추가
-    justifyContent: 'center', // 페이지 버튼들을 수평으로 중앙 정렬하기 위해 추가
-    marginVertical: 20, // 상하 여백 추가
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 20,
   },
   picture: {
     width: 50,

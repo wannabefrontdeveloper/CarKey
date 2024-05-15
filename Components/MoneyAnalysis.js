@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import {useResponse} from './ResponseContext';
-import {useState} from 'react';
 import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
 
 const MoneyAnalysis = () => {
@@ -88,12 +87,14 @@ const MoneyAnalysis = () => {
       <View style={styles.navbar}>
         <Text style={styles.navbarText}>수리비 분석 결과</Text>
       </View>
-      <Image
-        source={{
-          uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${responseData.data.originalImg}`,
-        }}
-        style={styles.mapImage}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${responseData.data.originalImg}`,
+          }}
+          style={styles.mapImage}
+        />
+      </View>
       <View style={styles.analysisSection}>
         <Icon name="child-care" size={60} color="#000" />
         <View style={styles.balloon}>
@@ -120,39 +121,63 @@ const MoneyAnalysis = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   navbar: {
     height: 70,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4d91da',
     paddingHorizontal: 10,
-    marginBottom: 100,
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 50,
+    fontSize: 24,
     fontWeight: 'bold',
   },
+  imageContainer: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 50,
+  },
   mapImage: {
-    width: 400,
-    height: 400,
-    resizeMode: 'contain',
-    marginLeft: 5,
-    marginBottom: 100,
+    width: '80%',
+    height: '80%',
+    transform: [{rotate: '90deg'}], // Rotate the image by 90 degrees
+  },
+  analysisSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+    paddingHorizontal: 10,
+  },
+  analysisText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#000',
+  },
+  balloon: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginLeft: 10,
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignSelf: 'stretch',
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    marginVertical: 20,
   },
   button: {
     backgroundColor: '#8c10eb',
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -161,30 +186,13 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     flex: 1,
+    marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontSize: 20,
-  },
-  analysisSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -40,
-    marginBottom: 29,
-  },
-  analysisText: {
-    marginLeft: 10,
-    fontSize: 25,
-    color: '#000',
-  },
-  balloon: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginLeft: 10,
   },
   disabledButton: {
     backgroundColor: '#ccc',
