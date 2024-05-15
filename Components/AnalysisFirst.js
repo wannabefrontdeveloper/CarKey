@@ -30,12 +30,11 @@ const AnalysisFirst = ({route}) => {
       console.log('Request Data:', formData);
       navigation.navigate('Loading');
       const response = await axios.post(
-        'https://ceprj.gachon.ac.kr:60020//user/analyze/cost',
+        'http://ceprj.gachon.ac.kr:60020/user/analyze/cost',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${storedToken}`,
           },
         },
       );
@@ -63,6 +62,7 @@ const AnalysisFirst = ({route}) => {
       } else {
         // 성공적으로 분석이 완료된 경우
         // 서버 응답 값을 ResponseProvider를 통해 공유
+        console.log('Response:', response.data);
         updateResponseData(response.data);
         // 분석 결과에 따라 다음 화면으로 이동하거나 작업 수행
       }

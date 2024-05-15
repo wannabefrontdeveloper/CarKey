@@ -31,8 +31,34 @@ const Login = ({navigation}) => {
     getTokenFromStorage();
   }, []);
 
-  const handleGuestLogin = () => {
-    navigation.navigate('Board');
+  const handleGuestLogin = async () => {
+    try {
+      const response = await axios.get(
+        'http://ceprj.gachon.ac.kr:60020/user/nonUsers',
+      );
+      if (response.status === 200) {
+        console.log('Response data:', response.data); // 서버에서 받은 데이터 출력
+        const accessToken = response.data.data.accessToken;
+
+        // accessToken이 null일 경우에도 Board 화면으로 이동
+        if (accessToken === null) {
+          console.log('Access Token is null, proceeding with guest login.');
+          // 비회원 로그인 시 AsyncStorage에 null 저장
+          await AsyncStorage.removeItem('token'); // 토큰을 삭제하여 null로 설정
+          setStoredToken(null); // TokenContext의 상태를 null로 업데이트
+          navigation.navigate('Board');
+        } else {
+          // 비회원이 아닐 경우, 토큰을 저장
+          await AsyncStorage.setItem('token', accessToken);
+          setStoredToken(accessToken); // TokenContext의 상태 업데이트
+          navigation.navigate('Board');
+        }
+      } else {
+        console.error('Error fetching data: ', response.status);
+      }
+    } catch (error) {
+      console.error('Error during guest login: ', error);
+    }
   };
 
   const handleForgotPassword = () => {
