@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const CameraScreen = ({navigation}) => {
   const navigateToBoard = () => {
@@ -90,12 +91,10 @@ const CameraScreen = ({navigation}) => {
       try {
         const photo = await cameraRef.current.takePhoto({
           quality: 'high',
-          width: 256,
-          height: 256,
         });
         console.log('Photo taken:', photo);
         setCapturedPhoto(photo); // 촬영된 사진 데이터를 상태에 저장
-        navigateToAnalysisFirst(photo); // 촬영 후 AnalysisFirst 화면으로 이동
+        navigateToAnalysisFirst({uri: 'file://' + photo.path}); // 촬영 후 AnalysisFirst 화면으로 이동
       } catch (error) {
         console.error('사진 촬영 중 오류 발생:', error);
       }
@@ -104,6 +103,24 @@ const CameraScreen = ({navigation}) => {
 
   const navigateToAnalysisFirst = photo => {
     navigation.navigate('AnalysisFirst', {photo});
+  };
+
+  const selectFromGallery = async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
+
+      if (result.assets && result.assets.length > 0) {
+        const photo = result.assets[0];
+        console.log('Photo selected from gallery:', photo);
+        setCapturedPhoto(photo); // 선택된 사진 데이터를 상태에 저장
+        navigateToAnalysisFirst(photo); // 사진 선택 후 AnalysisFirst 화면으로 이동
+      }
+    } catch (error) {
+      console.error('갤러리에서 사진 선택 중 오류 발생:', error);
+    }
   };
 
   if (!cameraPermissionGranted || !audioPermissionGranted) {
@@ -139,11 +156,9 @@ const CameraScreen = ({navigation}) => {
         <TouchableOpacity style={styles.button} onPress={takePicture}>
           <Icon name="panorama-fish-eye" size={30} color="#ffffff" />
         </TouchableOpacity>
-        {devices.length > 1 && (
-          <TouchableOpacity style={styles.button} onPress={switchCamera}>
-            <Icon name="cached" size={30} color="#ffffff" />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.button} onPress={selectFromGallery}>
+          <Icon name="photo-library" size={30} color="#ffffff" />
+        </TouchableOpacity>
       </View>
     </View>
   );

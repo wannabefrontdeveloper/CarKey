@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -20,14 +20,14 @@ const AnalysisFirst = ({route}) => {
 
   useEffect(() => {
     console.log('전달된 사진 데이터:', photo);
-    console.log('이미지 경로:', photo.path);
+    console.log('이미지 경로:', photo.uri); // uri 속성을 사용하여 경로 출력
   }, [photo]);
 
   const handleAnalysis = async () => {
     try {
       const formData = new FormData();
       formData.append('image', {
-        uri: 'file://' + photo.path,
+        uri: photo.uri, // photo.uri를 사용하여 uri 속성 전달
         name: 'photo.jpg',
         type: 'image/jpeg',
       });
@@ -79,7 +79,7 @@ const AnalysisFirst = ({route}) => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Text style={styles.text}>해당 사진으로 분석을 진행할까요?</Text>
-        <Image source={{uri: 'file://' + photo.path}} style={styles.image} />
+        <Image source={{uri: photo.uri}} style={styles.image} />
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleAnalysis}>

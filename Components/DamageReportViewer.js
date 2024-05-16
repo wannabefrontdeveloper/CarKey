@@ -161,12 +161,12 @@ const DamageReportView = () => {
                 <TouchableOpacity
                   onPress={() =>
                     handleImageClick(
-                      `http://ceprj.gachon.ac.kr:60020/image/ai/original/${analysis.originalImg}`,
+                      `http://ceprj.gachon.ac.kr:60020/image/ai/image/${analysis.naturalImg}`,
                     )
                   }>
                   <Image
                     source={{
-                      uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${analysis.originalImg}`,
+                      uri: `http://ceprj.gachon.ac.kr:60020/image/ai/image/${analysis.naturalImg}`,
                     }}
                     style={styles.image}
                   />
@@ -211,7 +211,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200, // 원하는 높이로 조절
     resizeMode: 'contain',
-    transform: [{rotate: '90deg'}], // Rotate the image by 90 degrees
   },
   text: {
     fontSize: 16,

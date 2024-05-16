@@ -395,31 +395,38 @@ const DetailScreen = ({route}) => {
     }
   };
   const handleRecommend = async () => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
-        },
-      };
+    if (storedToken === null) {
+      // 토큰값이 null인 경우 Alert를 띄웁니다.
+      Alert.alert('알림', '회원만 추천을 할 수 있습니다.', [{text: '확인'}], {
+        cancelable: true,
+      });
+    } else {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+          },
+        };
 
-      const response = await axios.post(
-        `http://ceprj.gachon.ac.kr:60020/board/${boardId}/recommend`,
-        null,
-        config,
-      );
+        const response = await axios.post(
+          `http://ceprj.gachon.ac.kr:60020/board/${boardId}/recommend`,
+          null,
+          config,
+        );
 
-      if (response.data.success) {
-        // 백엔드에서 true를 반환한 경우
-        Alert.alert('알림', '감사합니다!');
-        // 추천 요청이 성공하면 화면을 다시 그림
-        fetchBoard();
-      } else {
-        // 백엔드에서 false를 반환한 경우
-        Alert.alert('알림', '게시글 추천을 취소하셨습니다!');
+        if (response.data.success) {
+          // 백엔드에서 true를 반환한 경우
+          Alert.alert('알림', '감사합니다!');
+          // 추천 요청이 성공하면 화면을 다시 그림
+          fetchBoard();
+        } else {
+          // 백엔드에서 false를 반환한 경우
+          Alert.alert('알림', '게시글 추천을 취소하셨습니다!');
+        }
+      } catch (error) {
+        console.error('추천 요청 중 오류 발생:', error);
+        Alert.alert('오류', '추천 요청 중 오류가 발생했습니다.');
       }
-    } catch (error) {
-      console.error('추천 요청 중 오류 발생:', error);
-      Alert.alert('오류', '추천 요청 중 오류가 발생했습니다.');
     }
   };
   return (
@@ -431,7 +438,6 @@ const DetailScreen = ({route}) => {
           <Icon name="arrow-back" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>
-          {/* title이 8글자보다 길면 8글자까지만 잘라서 표시 */}
           {title.length > 6 ? `${title.substring(0, 6)}...` : title}
         </Text>
         <TouchableOpacity style={styles.menuContainer} onPress={toggleMenu}>

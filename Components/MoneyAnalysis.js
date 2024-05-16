@@ -35,6 +35,7 @@ const MoneyAnalysis = () => {
       // 서버로 전송할 데이터 생성
       const analysisData = {
         // 이 부분은 실제 서버에서 요구하는 필드에 맞춰서 수정해야 합니다.
+        naturalImg: responseData.data.naturalImg,
         originalImg: responseData.data.originalImg,
         scratchImg: responseData.data.scratchImg,
         crushedImg: responseData.data.crushedImg,
@@ -90,7 +91,7 @@ const MoneyAnalysis = () => {
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: `http://ceprj.gachon.ac.kr:60020/image/ai/original/${responseData.data.originalImg}`,
+            uri: `http://ceprj.gachon.ac.kr:60020/image/ai/image/${responseData.data.naturalImg}`,
           }}
           style={styles.mapImage}
         />
@@ -145,7 +146,6 @@ const styles = StyleSheet.create({
   mapImage: {
     width: '80%',
     height: '80%',
-    transform: [{rotate: '90deg'}], // Rotate the image by 90 degrees
   },
   analysisSection: {
     flexDirection: 'row',
