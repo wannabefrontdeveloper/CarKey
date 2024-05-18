@@ -74,38 +74,56 @@ const Setting = () => {
       ]);
     }
   };
+
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={navigateToPreviousScreen}
+          style={styles.backButton}>
+          <Icon name="arrow-back" size={30} color="#ffffff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>설정</Text>
+      </View>
+
       <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
-          <TouchableOpacity>
+        <View style={styles.menuContainer}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleAppInfoPress}>
             <Icon
-              name="arrow-back"
-              size={30}
-              color="white"
-              onPress={navigateToPreviousScreen}
+              name="info"
+              size={24}
+              color="#3f51b5"
+              style={styles.menuIcon}
+            />
+            <Text style={styles.label}>어플리케이션 정보</Text>
+            <Icon
+              name="arrow-forward-ios"
+              size={24}
+              color="#3f51b5"
+              style={styles.menuIcon}
             />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>설정</Text>
-        </View>
 
-        <View style={styles.divider} />
-
-        <View style={styles.menuItem}>
-          <TouchableOpacity onPress={handleAppInfoPress}>
-            <Text style={styles.label}>어플리케이션 정보</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.menuItem}>
-          <TouchableOpacity onPress={handleWithdrawalPress}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleWithdrawalPress}>
+            <Icon
+              name="delete"
+              size={24}
+              color="#e74c3c"
+              style={styles.menuIcon}
+            />
             <Text style={styles.label}>회원 탈퇴</Text>
+            <Icon
+              name="arrow-forward-ios"
+              size={24}
+              color="#3f51b5"
+              style={styles.menuIcon}
+            />
           </TouchableOpacity>
         </View>
-
-        <View style={styles.divider} />
       </ScrollView>
     </View>
   );
@@ -114,53 +132,46 @@ const Setting = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
-  },
-  scrollView: {
-    marginBottom: 60, // 하단 버튼의 높이만큼 마진을 줍니다.
+    backgroundColor: '#ecf0f1',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#4d91da',
+    padding: 5,
+    backgroundColor: '#3f51b5',
+  },
+  backButton: {
+    padding: 8,
   },
   headerTitle: {
     color: '#ffffff',
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 20,
+    marginLeft: 16,
   },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  username: {
-    marginLeft: 10,
-    fontSize: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
+  menuContainer: {
+    marginTop: 0,
   },
   menuItem: {
-    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  menuIcon: {
+    marginRight: 16,
   },
   label: {
-    fontSize: 25,
-  },
-  cameraButton: {
-    backgroundColor: '#4d91da',
-    borderRadius: 25,
-    padding: 15,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 50,
-    backgroundColor: '#4d91da',
+    flex: 1,
+    fontSize: 18,
+    color: '#2c3e50',
   },
 });
 

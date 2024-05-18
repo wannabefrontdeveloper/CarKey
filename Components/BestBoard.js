@@ -51,13 +51,6 @@ const BestBoard = () => {
     return () => backHandler.remove();
   }, []);
 
-  // 현재 페이지에 해당하는 항목들만 가져오는 함수
-  const getItemsForCurrentPage = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return boardData.slice(startIndex, endIndex);
-  };
-
   useEffect(() => {
     // 서버에서 데이터를 가져오는 함수 호출
     fetchBoardData();
@@ -81,6 +74,12 @@ const BestBoard = () => {
     }
   };
 
+  const getItemsForCurrentPage = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return boardData.slice(startIndex, endIndex);
+  };
+
   const navigateToMyPage = () => {
     // 여기서 토큰값을 확인하고 그에 따른 동작을 수행합니다.
 
@@ -102,7 +101,7 @@ const BestBoard = () => {
         cancelable: true,
       });
     } else {
-      // 토큰값이 존재하는 경우 마이페이지로 이동합니다.
+      // 토큰값이 존재하는 경우 새 게시글 페이지로 이동합니다.
       navigation.navigate('NewPost');
     }
   };
@@ -159,14 +158,16 @@ const BestBoard = () => {
     };
 
     return (
-      <TouchableOpacity onPress={navigateToDetail} style={styles.listItem}>
-        <View>
+      <TouchableOpacity onPress={navigateToDetail}>
+        <View style={styles.listItem}>
           <Text style={styles.listItemTitle}>{title}</Text>
-        </View>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.listItemUsername}>{nickName}</Text>
-          <Text style={styles.listItemDate}>{formattedDate}</Text>
-          <Text style={styles.listItemRecommend}>추천수: {recommendCount}</Text>
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.listItemUsername}>{nickName}</Text>
+            <Text style={styles.listItemDate}>{formattedDate}</Text>
+            <Text style={styles.listItemRecommend}>
+              추천수: {recommendCount}
+            </Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -212,18 +213,15 @@ const BestBoard = () => {
       </View>
       <FlatList
         data={getItemsForCurrentPage()} // 현재 페이지에 맞는 데이터만 렌더링
-        renderItem={({item}) => {
-          console.log(item); // 데이터가 제대로 전달되는지 확인하는 콘솔 로그
-          return (
-            <ListItem
-              title={item.title}
-              nickName={item.nickName}
-              postDate={item.postDate}
-              boardId={item.boardId}
-              recommendCount={item.recommendCount}
-            />
-          );
-        }}
+        renderItem={({item}) => (
+          <ListItem
+            title={item.title}
+            nickName={item.nickName}
+            postDate={item.postDate}
+            boardId={item.boardId}
+            recommendCount={item.recommendCount}
+          />
+        )}
         keyExtractor={item => item.boardId.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchBoardData} />
@@ -232,13 +230,13 @@ const BestBoard = () => {
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.button} onPress={navigateToBoard}>
-          <Icon name="thumb-up" size={40} color="#f7f4f4" />
+          <Icon name="thumb-up" size={35} color="#ffffff" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleCameraPress}>
-          <Icon name="photo-camera" size={40} color="#f7f4f4" />
+          <Icon name="photo-camera" size={35} color="#ffffff" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={navigateToMyPage}>
-          <Icon name="person" size={40} color="#f7f4f4" />
+          <Icon name="person" size={35} color="#ffffff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -248,86 +246,98 @@ const BestBoard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ecf0f1', // 밝은 회색 배경
   },
   navbar: {
     height: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
-    paddingHorizontal: 10,
+    backgroundColor: '#3f51b5', // 인망블루 네비게이션 바
+    paddingHorizontal: 15,
+    marginBottom: 3,
   },
   listItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    borderBottomColor: '#ddd',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#ffffff',
+    marginBottom: 5,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    marginHorizontal: 10,
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 인망블루 하단 네비게이션 바
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-  },
-  iconContainer: {
-    padding: 5,
   },
   listItemText: {
-    fontSize: 20,
+    fontSize: 18,
     flex: 1,
-  },
-  listItemUsername: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  listItemDate: {
-    fontSize: 12,
-    color: '#888888',
-  },
-  listItemRecommend: {
-    fontSize: 14,
-    color: '#888888',
+    color: '#2c3e50', // 짙은 회색 텍스트
   },
   userInfoContainer: {
     alignItems: 'flex-end',
   },
   listItemTitle: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2c3e50', // 짙은 회색 제목
+  },
+  listItemUsername: {
+    fontSize: 14,
+    color: '#7f8c8d', // 중간 회색 사용자 이름
+  },
+  listItemDate: {
+    fontSize: 12,
+    color: '#bdc3c7', // 밝은 회색 날짜
+    marginTop: 3,
+  },
+  listItemRecommend: {
+    fontSize: 14,
+    color: '#e74c3c', // 밝은 빨간색 추천수
+    marginTop: 3,
   },
   pageButton: {
-    paddingHorizontal: 15, // 좌우 padding 추가
-    paddingVertical: 8, // 상하 padding 추가
-    marginHorizontal: 1, // 좌우 margin 추가
-    backgroundColor: '#8fa1b4',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginHorizontal: 5,
+    backgroundColor: '#3f51b5', // 인망블루 페이지 버튼
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 7,
   },
   currentPageButton: {
-    backgroundColor: '#4d91da', // 현재 페이지 버튼의 배경색 변경
+    backgroundColor: '#283593', // 더 짙은 인망블루 현재 페이지 버튼
   },
   pageButtonText: {
-    fontSize: 16, // 버튼 텍스트 크기 조정
-    color: '#f7f2f2',
+    fontSize: 20,
+    color: '#ffffff',
   },
   pageButtonsContainer: {
-    flexDirection: 'row', // 페이지 버튼들을 가로로 배열하기 위해 추가
-    justifyContent: 'center', // 페이지 버튼들을 수평으로 중앙 정렬하기 위해 추가
-    marginVertical: 20, // 상하 여백 추가
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 5,
   },
-  picture: {
-    width: 50,
-    height: 50,
-    marginLeft: 10,
+  iconContainer: {
+    padding: 10,
+  },
+  button: {
+    alignItems: 'center',
   },
 });
 

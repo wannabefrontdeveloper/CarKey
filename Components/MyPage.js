@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
-import {useEffect} from 'react';
-import {useState} from 'react';
 import axios from 'axios';
 
 const MyPage = () => {
@@ -20,8 +18,9 @@ const MyPage = () => {
   const {storedToken, removeToken} = useToken(); // TokenContext에서 storedToken과 removeToken 가져오기
   const isFocused = useIsFocused(); // 화면 포커스 여부 확인
   const navigation = useNavigation();
+
   const navigateToBoard = () => {
-    navigation.navigate('Board');
+    navigation.goBack();
   };
 
   useEffect(() => {
@@ -188,8 +187,10 @@ const MyPage = () => {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.button} onPress={handleCameraPress}>
-          <Icon name="photo-camera" size={40} color="#f7f4f4" />
+        <TouchableOpacity
+          style={styles.cameraButton}
+          onPress={handleCameraPress}>
+          <Icon name="photo-camera" size={35} color="#f7f4f4" />
         </TouchableOpacity>
       </View>
     </View>
@@ -199,7 +200,7 @@ const MyPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#ffffff', // 인디고 블루 계열 배경색
   },
   scrollView: {
     marginBottom: 60, // 하단 버튼의 높이만큼 마진을 줍니다.
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 인디고 블루 계열 헤더 배경색
   },
   headerTitle: {
     color: '#ffffff',
@@ -224,6 +225,8 @@ const styles = StyleSheet.create({
   username: {
     marginLeft: 10,
     fontSize: 20,
+    color: 'black', // 인디고 블루 계열 텍스트 색상
+    fontWeight: 'bold',
   },
   divider: {
     height: 1,
@@ -234,18 +237,19 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 25,
+    color: '#1A237E', // 인디고 블루 계열 텍스트 색상
   },
   cameraButton: {
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 인디고 블루 계열 버튼 배경색
     borderRadius: 25,
-    padding: 15,
+    padding: 10,
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    height: 50,
-    backgroundColor: '#4d91da',
+    height: 60,
+    backgroundColor: '#3f51b5', // 인디고 블루 계열 하단 네비게이션 배경색
   },
 });
 

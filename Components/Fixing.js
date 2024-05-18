@@ -121,20 +121,20 @@ const Fixing = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#E3F2FD', // 페이지 배경색
   },
   navbar: {
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     paddingHorizontal: 10,
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 35,
+    fontSize: 25,
     fontWeight: 'bold',
-    marginRight: 200,
+    marginLeft: 20, // 이 줄을 추가합니다.
   },
   profileContainer: {
     alignItems: 'center',
@@ -143,15 +143,18 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 150,
     height: 150,
-    borderRadius: 200,
+    borderRadius: 75,
     backgroundColor: '#d9d9d9',
+    marginBottom: 20,
   },
   label: {
     alignSelf: 'flex-start',
     marginLeft: 40,
     marginTop: 10,
-    fontSize: 30,
+    fontSize: 20,
     marginBottom: 10,
+    color: '#3f51b5',
+    fontWeight: 'bold',
   },
   input: {
     width: '80%',
@@ -162,10 +165,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 16,
     fontSize: 18,
+    backgroundColor: '#FFFFFF',
+    color: '#000', // 이 줄을 추가합니다.
   },
   editButton: {
     alignItems: 'center',
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 버튼 배경색
     padding: 10,
     width: '80%',
     borderRadius: 5,

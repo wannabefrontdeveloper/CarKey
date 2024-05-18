@@ -30,6 +30,7 @@ import {TokenProvider} from './Components/TokenContext'; // TokenProvider를 가
 import EditScreen from './Components/EditScreen';
 import {ResponseProvider} from './Components//ResponseContext';
 import {ImageProvider} from './Components/ImageContext';
+import Menu from './Components/Menu';
 
 const Stack = createNativeStackNavigator();
 
@@ -165,6 +166,11 @@ const App = () => {
                 <Stack.Screen
                   name="EditScreen"
                   component={EditScreen}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="Menu"
+                  component={Menu}
                   options={{headerShown: false}}
                 />
               </Stack.Navigator>

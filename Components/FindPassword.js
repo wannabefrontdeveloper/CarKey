@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native'; // useNavigation을 import 합니다.
 import axios from 'axios';
-import {useRoute} from '@react-navigation/native';
 
 const FindPassword = () => {
   const [email, setEmail] = useState('');
@@ -54,29 +53,23 @@ const FindPassword = () => {
 
   return (
     <View style={styles.container}>
-      {/* 뒤로 가기 버튼 (기능은 구현해야 함) */}
-      <TouchableOpacity onPress={() => console.log('뒤로 가기')}>
-        <Text style={styles.backButton}>{`이메일을 입력해주세요`}</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>이메일을 입력해주세요</Text>
 
-      {/* 이메일 입력 필드 */}
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
         value={email}
-        placeholder=""
+        placeholder="이메일"
         keyboardType="email-address"
         autoCapitalize="none"
+        placeholderTextColor="#A9A9A9"
       />
 
-      {/* 확인 버튼 */}
       <TouchableOpacity style={styles.button} onPress={handleFindPassword}>
         <Text style={styles.buttonText}>완료</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button2}
-        onPress={() => navigation.goBack()}>
-        <Text style={styles.buttonText}>뒤로 가기</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={styles.backButton}>뒤로 가기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -88,45 +81,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#E3F2FD', // 인디고 블루 배경색
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 30,
-    fontSize: 45,
-    fontWeight: '600',
-    color: '#000',
+    marginBottom: 20,
+    fontSize: 18,
+    color: '#3f51b5', // 인디고 블루 색상
+    fontWeight: 'bold',
+  },
+  title: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#1A237E',
+    marginBottom: 40,
+    textAlign: 'center',
   },
   input: {
     width: '100%',
     height: 50,
-    borderColor: '#151414',
+    borderColor: '#3f51b5', // 인디고 블루 테두리 색상
     borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 30,
+    borderRadius: 25,
+    marginBottom: 20,
     paddingHorizontal: 16,
     fontSize: 18,
+    backgroundColor: '#FFF',
+    color: '#000',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5', // 인디고 블루 버튼 색상
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 12,
+    borderRadius: 25,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
-  },
-  button2: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#0e0404',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 12,
+    fontWeight: 'bold',
   },
 });
 

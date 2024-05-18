@@ -13,7 +13,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 
 const CameraScreen = ({navigation}) => {
   const navigateToBoard = () => {
-    navigation.navigate('Board');
+    navigation.goBack();
   };
 
   const cameraRef = useRef(null);
@@ -198,7 +198,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: -121,
     marginTop: -160,
-    backgroundColor: '#0d0d0e',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 5,
+    paddingVertical: 2,
   },
   button: {},
   tabBar: {
@@ -206,7 +208,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
+  },
+  iconContainer: {
+    padding: 10,
   },
 });
 

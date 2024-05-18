@@ -21,20 +21,18 @@ const Register = ({navigation}) => {
   const [emailCheckButtonText, setEmailCheckButtonText] = useState('중복 확인');
   const [nicknameCheckButtonText, setNicknameCheckButtonText] =
     useState('중복 확인');
+
   const handleSignUp = () => {
-    // 이메일 또는 닉네임 중 하나라도 중복 확인을 하지 않은 경우
     if (!isEmailChecked || !isNicknameChecked) {
       Alert.alert('중복 확인', '이메일과 닉네임 중복확인을 해주세요!');
-      return; // 함수 실행 중단
+      return;
     }
 
-    // 패스워드 입력 여부 확인
     if (!password || !confirmPassword) {
       Alert.alert('경고', '패스워드를 입력해주세요!');
-      return; // 함수 실행 중단
+      return;
     }
 
-    // 패스워드 길이 및 특수문자 포함 여부 확인
     const passwordPattern =
       /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/;
     if (!passwordPattern.test(password)) {
@@ -42,13 +40,12 @@ const Register = ({navigation}) => {
         '경고',
         '패스워드는 특수문자를 포함하여 8글자 이상이어야 합니다.',
       );
-      return; // 함수 실행 중단
+      return;
     }
 
-    // 패스워드와 패스워드 확인이 서로 다른지 확인
     if (password !== confirmPassword) {
       Alert.alert('경고', '비밀번호가 서로 다릅니다.');
-      return; // 함수 실행 중단
+      return;
     }
 
     axios
@@ -70,25 +67,21 @@ const Register = ({navigation}) => {
   };
 
   const handleSignIn = () => {
-    // 로그인 화면으로 이동
     navigation.navigate('Login');
   };
 
   const handleCheckEmail = () => {
-    // 이메일이 비어 있는지 확인
     if (!email.trim()) {
       Alert.alert('경고', '이메일을 입력해주세요!');
-      return; // 이메일이 비어 있으면 함수 종료
+      return;
     }
 
     const atSymbolCount = email.split('@').length - 1;
-    // Check if the email contains ".com" or ".net"
     const isEmailValid = email.includes('.com') || email.includes('.net');
 
     if (atSymbolCount !== 1 || !isEmailValid) {
       Alert.alert('오류', '올바르지 않은 이메일 형식입니다.');
     } else {
-      // 이메일 값을 서버로 전달하여 중복 확인 요청
       axios
         .post('http://ceprj.gachon.ac.kr:60020/user/loginId/exists', {
           loginId: email,
@@ -96,12 +89,10 @@ const Register = ({navigation}) => {
         .then(response => {
           const {data} = response;
           if (data.success === 'true') {
-            // 중복되지 않은 경우
             setEmailChecked(true);
             setEmailCheckButtonText('확인 완료');
             Alert.alert('중복 확인', '중복 확인 완료!');
           } else {
-            // 중복된 경우
             Alert.alert('중복 확인', '이미 사용 중인 이메일입니다.');
           }
         })
@@ -116,10 +107,8 @@ const Register = ({navigation}) => {
     if (nickname.trim() === '') {
       Alert.alert('경고', '닉네임을 입력해주세요!');
     } else if (!/^[가-힣a-zA-Z]+$/.test(nickname)) {
-      // 영어 및 한글만 가능한 정규 표현식 검사에 실패한 경우
       Alert.alert('경고', '닉네임에 특수문자 및 공백은 허용되지 않습니다.');
     } else {
-      // 닉네임 값을 서버로 전달하여 중복 확인 요청
       axios
         .post('http://ceprj.gachon.ac.kr:60020/user/nickName/exists', {
           nickName: nickname,
@@ -127,12 +116,10 @@ const Register = ({navigation}) => {
         .then(response => {
           const {data} = response;
           if (data.success === 'true') {
-            // 중복되지 않은 경우
             setNicknameChecked(true);
             setNicknameCheckButtonText('확인 완료');
             Alert.alert('중복 확인', '중복 확인 완료!');
           } else {
-            // 중복된 경우
             Alert.alert('중복 확인', '이미 사용 중인 닉네임입니다.');
           }
         })
@@ -142,12 +129,11 @@ const Register = ({navigation}) => {
         });
     }
   };
+
   const handleNicknameChange = newNickname => {
     if (newNickname.length > 6) {
-      // 6글자를 초과하는 경우 경고창을 띄웁니다.
       Alert.alert('경고', '닉네임은 최대 6글자입니다.');
     } else {
-      // 그렇지 않은 경우 닉네임 상태를 업데이트합니다.
       setNickname(newNickname);
     }
   };
@@ -165,7 +151,8 @@ const Register = ({navigation}) => {
           value={email}
           keyboardType="email-address"
           autoCapitalize="none"
-          editable={!isEmailChecked} // 중복 확인 후 수정 불가능하도록 설정
+          editable={!isEmailChecked}
+          placeholderTextColor="#A9A9A9"
         />
         <TouchableOpacity
           disabled={isEmailChecked}
@@ -182,7 +169,8 @@ const Register = ({navigation}) => {
         onChangeText={setPassword}
         value={password}
         secureTextEntry
-        autoCapitalize="none" // 이 부분을 추가하세요
+        autoCapitalize="none"
+        placeholderTextColor="#A9A9A9"
       />
       <TextInput
         style={styles.singleInput}
@@ -191,6 +179,7 @@ const Register = ({navigation}) => {
         value={confirmPassword}
         secureTextEntry
         autoCapitalize="none"
+        placeholderTextColor="#A9A9A9"
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -198,7 +187,8 @@ const Register = ({navigation}) => {
           placeholder="닉네임(최대 6자, 특수문자 X)"
           onChangeText={handleNicknameChange}
           value={nickname}
-          editable={!isNicknameChecked} // 중복 확인 후 수정 불가능하도록 설정
+          editable={!isNicknameChecked}
+          placeholderTextColor="#A9A9A9"
         />
         <TouchableOpacity
           disabled={isNicknameChecked}
@@ -224,12 +214,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: '#E3F2FD',
   },
   title: {
     fontSize: 60,
     fontWeight: '900',
     marginBottom: 40,
+    color: '#3f51b5',
+    textShadowColor: '#BBDEFB',
+    textShadowOffset: {width: 2, height: 2},
+    textShadowRadius: 3,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -237,56 +231,87 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 60,
     width: '80%',
-    borderColor: 'gray',
+    borderColor: '#3f51b5',
     borderWidth: 1,
     padding: 10,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   input: {
     flex: 1,
     marginRight: 10,
+    color: '#000',
   },
   singleInput: {
     width: '80%',
     height: 60,
-    borderColor: 'gray',
+    borderColor: '#3f51b5',
     borderWidth: 1,
     marginBottom: 20,
     paddingLeft: 10,
-    borderRadius: 5,
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    color: '#000',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   checkButton: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
+    paddingHorizontal: 15,
+    backgroundColor: '#3f51b5',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   checkButtonText: {
     color: 'white',
+    fontWeight: 'bold',
   },
   button: {
     width: '80%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 25,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
+    fontWeight: 'bold',
   },
   signInText: {
-    color: 'blue',
+    color: '#3f51b5',
     fontSize: 16,
+    marginTop: 10,
   },
   checkButtonDisabled: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: '#ccc', // 예시 색상
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

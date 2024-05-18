@@ -71,7 +71,7 @@ const ChangeEmail = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.backButton}>{`새로운 이메일을 입력해주세요`}</Text>
+        <Text style={styles.backButton}>{`새로운 이메일을 입력해주세요!`}</Text>
       </TouchableOpacity>
 
       <TextInput
@@ -101,28 +101,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#E3F2FD', // 페이지 배경색
   },
   backButton: {
     alignSelf: 'flex-start',
     marginBottom: 30,
-    fontSize: 38,
+    fontSize: 35,
     fontWeight: '600',
-    color: '#000',
+    color: '#151516',
   },
   input: {
     width: '100%',
     height: 50,
-    borderColor: '#151414',
+    borderColor: '#3f51b5', // 테두리 색상
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 30,
     paddingHorizontal: 16,
     fontSize: 18,
+    backgroundColor: '#FFFFFF',
+    color: '#000',
   },
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5', // 버튼 배경색
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -131,11 +134,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
+    fontWeight: 'bold',
   },
   button2: {
     width: '100%',
     height: 50,
-    backgroundColor: '#0e0404',
+    backgroundColor: '#797c8f', // 버튼 배경색
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,

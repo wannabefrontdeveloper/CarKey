@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import {useToken} from './TokenContext';
@@ -13,13 +20,11 @@ const MyWritePage = () => {
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
   const [refreshing, setRefreshing] = useState(false);
 
-  const items = [];
-
   // 현재 페이지에 해당하는 항목들만 가져오는 함수
   const getItemsForCurrentPage = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return items.slice(startIndex, endIndex);
+    return boardData.slice(startIndex, endIndex);
   };
 
   const navigateToMyPage = () => {
@@ -66,7 +71,7 @@ const MyWritePage = () => {
     const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
 
     // 날짜와 시간을 문자열로 조합하여 포맷팅
-    const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}`;
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
 
     const navigateToDetail = () => {
       // DetailScreen으로 이동하고 게시글의 상세 정보를 params로 전달합니다.
@@ -84,7 +89,7 @@ const MyWritePage = () => {
     return (
       <TouchableOpacity onPress={navigateToDetail}>
         <View style={styles.listItem}>
-          <Text style={styles.listItemText}>{title}</Text>
+          <Text style={styles.listItemTitle}>{title}</Text>
           <View style={styles.userInfoContainer}>
             <Text style={styles.listItemUsername}>{username}</Text>
             <Text style={styles.listItemDate}>{formattedDate}</Text>
@@ -96,6 +101,7 @@ const MyWritePage = () => {
       </TouchableOpacity>
     );
   };
+
   // 페이지 버튼 렌더링 함수
   const renderPageButton = pageNumber => (
     <TouchableOpacity
@@ -122,20 +128,17 @@ const MyWritePage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-        <TouchableOpacity style={styles.iconContainer}>
-          <Icon
-            name="arrow-back"
-            size={30}
-            onPress={navigateToMyPage}
-            color="#ffffff"
-          />
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={navigateToMyPage}>
+          <Icon name="arrow-back" size={30} color="#ffffff" />
         </TouchableOpacity>
         <View style={styles.navbarTextContainer}>
           <Text style={styles.navbarText}>내가 쓴 글</Text>
         </View>
       </View>
       <FlatList
-        data={boardData}
+        data={getItemsForCurrentPage()}
         renderItem={({item}) => (
           <ListItem
             title={item.title}
@@ -156,34 +159,44 @@ const MyWritePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ecf0f1', // 밝은 회색 배경
   },
   navbar: {
     height: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
-    paddingHorizontal: 10,
+    backgroundColor: '#3f51b5', // 인디고 블루 네비게이션 바
+    paddingHorizontal: 15,
+    marginBottom: 3,
   },
   listItem: {
-    padding: 19,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    borderBottomColor: '#ddd',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#ffffff',
+    marginBottom: 5,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    marginHorizontal: 10,
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 인디고 블루 하단 네비게이션 바
   },
   button: {},
   navbarText: {
     color: '#ffffff',
-    fontSize: 35,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   iconContainer: {
@@ -193,37 +206,48 @@ const styles = StyleSheet.create({
     fontSize: 20,
     flex: 1,
   },
-  listItemUsername: {
-    fontSize: 16,
+  listItemTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
+    color: '#2c3e50', // 짙은 회색 제목
+  },
+  listItemUsername: {
+    fontSize: 14,
+    color: '#7f8c8d', // 중간 회색 사용자 이름
   },
   listItemDate: {
     fontSize: 12,
-    color: '#888888',
+    color: '#bdc3c7', // 밝은 회색 날짜
+    marginTop: 3,
+  },
+  listItemRecommend: {
+    fontSize: 14,
+    color: '#e74c3c', // 밝은 빨간색 추천수
+    marginTop: 3,
   },
   userInfoContainer: {
     alignItems: 'flex-end',
   },
   pageButton: {
-    paddingHorizontal: 15, // 좌우 padding 추가
-    paddingVertical: 8, // 상하 padding 추가
-    marginHorizontal: 1, // 좌우 margin 추가
-    backgroundColor: '#8fa1b4',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginHorizontal: 5,
+    backgroundColor: '#3f51b5', // 인디고 블루 페이지 버튼
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 7,
   },
   currentPageButton: {
-    backgroundColor: '#4d91da', // 현재 페이지 버튼의 배경색 변경
+    backgroundColor: '#283593', // 더 짙은 인디고 블루 현재 페이지 버튼
   },
   pageButtonText: {
-    fontSize: 16, // 버튼 텍스트 크기 조정
-    color: '#f7f2f2',
+    fontSize: 20,
+    color: '#ffffff',
   },
   pageButtonsContainer: {
-    flexDirection: 'row', // 페이지 버튼들을 가로로 배열하기 위해 추가
-    justifyContent: 'center', // 페이지 버튼들을 수평으로 중앙 정렬하기 위해 추가
-    marginVertical: 20, // 상하 여백 추가
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 5,
   },
   navbarTextContainer: {
     flex: 1,

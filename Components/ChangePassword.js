@@ -31,7 +31,6 @@ const ChangePasswordScreen = () => {
       return;
     }
 
-    // 정규식을 사용하여 패스워드의 유효성을 검사합니다.
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()-_+=])(?=.*[0-9]).{8,}$/;
 
@@ -49,7 +48,6 @@ const ChangePasswordScreen = () => {
     }
 
     try {
-      // 이메일 값을 함께 보내기 위해 객체에 email 필드 추가
       const data = {
         newPassword: password, // 새 비밀번호
         loginId: email, // 이메일
@@ -57,29 +55,25 @@ const ChangePasswordScreen = () => {
 
       console.log('보내는 데이터:', data);
 
-      // 백엔드로 PUT 요청 보내기
       const response = await axios.put(
         'http://ceprj.gachon.ac.kr:60020/user/mypage/infoChange/password',
-        data, // data 객체 전달
+        data,
       );
 
-      // 응답 처리
-      console.log(response.data); // 응답에 유용한 데이터가 있다고 가정합니다.
+      console.log(response.data);
 
-      // 비밀번호 변경 성공 알림 후 로그인 화면으로 이동
       Alert.alert(
         '비밀번호 변경 성공!',
         '새로운 비밀번호로 로그인해주세요!',
         [
           {
             text: '확인',
-            onPress: () => navigation.navigate('Login'), // Login.js 화면으로 이동
+            onPress: () => navigation.navigate('Login'),
           },
         ],
         {cancelable: false},
       );
     } catch (error) {
-      // 에러 처리
       console.error('에러:', error);
       Alert.alert('에러', '비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
     }
@@ -95,6 +89,7 @@ const ChangePasswordScreen = () => {
         onChangeText={handlePasswordChange}
         value={password}
         autoCapitalize="none"
+        placeholderTextColor="#A9A9A9"
       />
       <TextInput
         style={styles.input}
@@ -103,6 +98,7 @@ const ChangePasswordScreen = () => {
         onChangeText={handleConfirmPasswordChange}
         value={confirmPassword}
         autoCapitalize="none"
+        placeholderTextColor="#A9A9A9"
       />
       <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
         <Text style={styles.buttonText}>완료</Text>
@@ -117,35 +113,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#E3F2FD', // 인디고 블루 배경색
   },
   title: {
-    fontSize: 30,
+    fontSize: 24,
     marginBottom: 30,
-    fontWeight: '600',
-    color: '#000',
+    fontWeight: 'bold',
+    color: '#1A237E',
+    textAlign: 'center',
   },
   input: {
     width: '100%',
     height: 50,
-    borderColor: '#151414',
+    borderColor: '#1A237E', // 인디고 블루 테두리 색상
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 25,
     marginBottom: 20,
     paddingHorizontal: 16,
     fontSize: 18,
+    backgroundColor: '#FFF',
+    color: '#000',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5', // 인디고 블루 버튼 색상
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 0,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

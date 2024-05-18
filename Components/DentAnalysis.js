@@ -31,7 +31,7 @@ const DentAnalysis = () => {
         />
       </View>
       <View style={styles.analysisSection}>
-        <Icon name="child-care" size={60} color="#000" />
+        <Icon name="sentiment-very-satisfied" size={60} color="#3f51b5" />
         <View style={styles.balloon}>
           <Text style={styles.analysisText}>
             빨간색 부위가 덴트를 뜻합니다!
@@ -63,11 +63,15 @@ const styles = StyleSheet.create({
   },
   navbar: {
     height: 70,
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     paddingHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   navbarText: {
     color: '#ffffff',
@@ -79,11 +83,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   mapImage: {
-    width: '80%',
-    height: '80%',
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
+    borderRadius: 10,
   },
   analysisSection: {
     flexDirection: 'row',
@@ -91,6 +104,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   analysisText: {
     marginLeft: 10,
@@ -98,8 +119,8 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   balloon: {
-    backgroundColor: '#fff',
-    padding: 10,
+    backgroundColor: '#f0f0f0',
+    padding: 15,
     borderRadius: 10,
     marginLeft: 10,
     flex: 1,
@@ -111,25 +132,37 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   button: {
-    backgroundColor: '#82888f',
+    backgroundColor: '#9e9fa8',
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 10,
     flex: 1,
     marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   button2: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5',
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 10,
     flex: 1,
     marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

@@ -237,13 +237,13 @@ const Board = () => {
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.button} onPress={navigateToBestBoard}>
-          <Icon name="thumb-up-off-alt" size={40} color="#f7f4f4" />
+          <Icon name="thumb-up-off-alt" size={35} color="#ffffff" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleCameraPress}>
-          <Icon name="photo-camera" size={40} color="#f7f4f4" />
+          <Icon name="photo-camera" size={35} color="#ffffff" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={navigateToMyPage}>
-          <Icon name="person" size={40} color="#f7f4f4" />
+          <Icon name="person" size={35} color="#ffffff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -253,70 +253,98 @@ const Board = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ecf0f1', // 밝은 회색 배경
   },
   navbar: {
     height: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
-    paddingHorizontal: 10,
+    backgroundColor: '#3f51b5', // 인망블루 네비게이션 바
+    paddingHorizontal: 15,
+    marginBottom: 3,
   },
   listItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    borderBottomColor: '#ddd',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#ffffff',
+    marginBottom: 5,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    marginHorizontal: 10,
   },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5', // 인망블루 하단 네비게이션 바
   },
   navbarText: {
     color: '#ffffff',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   listItemText: {
-    fontSize: 20,
+    fontSize: 18,
     flex: 1,
+    color: '#2c3e50', // 짙은 회색 텍스트
   },
   userInfoContainer: {
     alignItems: 'flex-end',
   },
   listItemTitle: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2c3e50', // 짙은 회색 제목
+  },
+  listItemUsername: {
+    fontSize: 14,
+    color: '#7f8c8d', // 중간 회색 사용자 이름
+  },
+  listItemDate: {
+    fontSize: 12,
+    color: '#bdc3c7', // 밝은 회색 날짜
+    marginTop: 3,
+  },
+  listItemRecommend: {
+    fontSize: 14,
+    color: '#e74c3c', // 밝은 빨간색 추천수
+    marginTop: 3,
   },
   pageButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginHorizontal: 1,
-    backgroundColor: '#8fa1b4',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginHorizontal: 5,
+    backgroundColor: '#3f51b5', // 인망블루 페이지 버튼
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 7,
   },
   currentPageButton: {
-    backgroundColor: '#4d91da',
+    backgroundColor: '#283593', // 더 짙은 인망블루 현재 페이지 버튼
   },
   pageButtonText: {
-    fontSize: 16,
-    color: '#f7f2f2',
+    fontSize: 20,
+    color: '#ffffff',
   },
   pageButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 20,
+    marginVertical: 5,
   },
-  picture: {
-    width: 50,
-    height: 50,
-    marginLeft: 10,
+  iconContainer: {
+    padding: 10,
+  },
+  button: {
+    alignItems: 'center',
   },
 });
 

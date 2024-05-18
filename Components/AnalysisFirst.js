@@ -86,7 +86,7 @@ const AnalysisFirst = ({route}) => {
           <Text style={styles.buttonText}>분석하기</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.button2}
+          style={[styles.button, styles.buttonSecondary]}
           onPress={navigateToCameraScreen}>
           <Text style={styles.buttonText}>다시 촬영하기</Text>
         </TouchableOpacity>
@@ -99,21 +99,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 100, // Add padding to move content down
+    paddingTop: 100, // 컨텐츠를 아래로 이동
   },
   imageContainer: {
     flex: 2,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   image: {
-    width: '80%',
-    height: '80%',
+    width: '100%',
+    height: 300,
     resizeMode: 'contain',
+    borderRadius: 15,
+    borderWidth: 2,
   },
   text: {
-    fontSize: 24,
-    color: 'black',
+    fontSize: 32,
+    color: '#0f0f0f',
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
@@ -128,26 +132,20 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#3f51b5',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 25,
     marginBottom: 12,
+    elevation: 3,
   },
-  button2: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#808682f4',
-    borderColor: '#f0f2f5',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    marginBottom: 32,
+  buttonSecondary: {
+    backgroundColor: '#757de8',
   },
   buttonText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   errorText: {
     color: 'red',

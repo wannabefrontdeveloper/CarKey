@@ -96,7 +96,7 @@ const DamageReportView = () => {
   };
 
   const navigateToMyPage = () => {
-    navigation.navigate('MyPage');
+    navigation.goBack();
   };
 
   const analysisForSelectedDate = getAnalysisForSelectedDate();
@@ -141,6 +141,14 @@ const DamageReportView = () => {
           current={new Date().toISOString().split('T')[0]} // 현재 날짜로 설정
           markedDates={getMarkedDates()} // getMarkedDates 함수로 마킹된 날짜들 가져오기
           onDayPress={day => handleDatePress(day.dateString)} // onDayPress 이벤트 핸들러 추가
+          theme={{
+            selectedDayBackgroundColor: '#3f51b5',
+            arrowColor: '#3f51b5',
+            todayTextColor: '#3f51b5',
+            dayTextColor: '#2d4150',
+            textDisabledColor: '#d9e1e8',
+            monthTextColor: '#3f51b5',
+          }}
         />
         {selectedDate && analysisForSelectedDate && (
           <>
@@ -151,7 +159,7 @@ const DamageReportView = () => {
                     styles.text,
                     styles.centerText,
                     {
-                      backgroundColor: '#4d91da',
+                      backgroundColor: '#3f51b5',
                       color: 'white',
                       borderRadius: 10,
                     },
@@ -193,13 +201,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     paddingHorizontal: 10,
   },
   navBarTitle: {
     color: 'white',
     fontSize: 24,
-    marginRight: 230,
+    marginRight: 150,
   },
   scrollView: {
     marginHorizontal: 20,

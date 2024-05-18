@@ -13,22 +13,19 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
-  Alert, // Alert 추가
+  Alert,
 } from 'react-native';
-import {useNavigation, useIsFocused} from '@react-navigation/native'; // useIsFocused 추가
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
-import {useToken} from './TokenContext'; // TokenContext에서 useToken 가져오기
+import {useToken} from './TokenContext';
 import {useFocusEffect} from '@react-navigation/native';
 import {useImage} from './ImageContext';
-import {Button} from 'react-native';
 
 const DetailScreen = ({route}) => {
   const {title, username, date, text, picture, boardId} = route.params;
-  const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
-  console.log('boardId:', boardId);
+  const {storedToken} = useToken();
   const [isLoadingImage, setIsLoadingImage] = useState(true);
-  // DetailScreen 컴포넌트 내에서 Menu 아이콘 및 상태 추가
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {setImageUri} = useImage();
   const [activeCommentId, setActiveCommentId] = useState(null);
@@ -40,10 +37,8 @@ const DetailScreen = ({route}) => {
     setImageUri(boardData?.imgPath);
   }, [boardData]);
 
-  // 메뉴 토글 함수
   const toggleMenu = () => {
     if (storedToken === null) {
-      // 토큰값이 null인 경우 Alert를 띄웁니다.
       Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
         cancelable: true,
       });
@@ -56,13 +51,12 @@ const DetailScreen = ({route}) => {
 
   useEffect(() => {
     if (isFocused) {
-      fetchBoard(); // 화면이 다시 포커스를 받을 때마다 데이터 새로고침
+      fetchBoard();
     }
-  }, [isFocused]); // isFocused 상태가 변경될 때마다 실행
+  }, [isFocused]);
 
   const handleDelete = async () => {
     try {
-      // 해당 게시글이 현재 사용자의 것인지 확인하는 요청을 보냄
       const checkResponse = await axios.get(
         `http://ceprj.gachon.ac.kr:60020/board/${boardId}/check`,
         {
@@ -74,7 +68,6 @@ const DetailScreen = ({route}) => {
       );
 
       if (checkResponse.data.success === 'True') {
-        // 권한이 있을 경우 삭제 확인 다이얼로그를 표시
         Alert.alert(
           '삭제 확인',
           '정말 삭제하시겠어요?',
@@ -87,7 +80,6 @@ const DetailScreen = ({route}) => {
               text: '삭제',
               onPress: async () => {
                 try {
-                  // 삭제 요청 보내기
                   const response = await axios.delete(
                     `http://ceprj.gachon.ac.kr:60020/admin/board/${boardId}`,
                     {
@@ -98,12 +90,9 @@ const DetailScreen = ({route}) => {
                   );
 
                   if (response.data.success) {
-                    // 삭제 성공 알림 표시
                     Alert.alert('알림', '게시글이 삭제되었습니다.');
-                    // 삭제 후 이전 화면으로 돌아가기
                     navigateToPreviousScreen();
                   } else {
-                    // 삭제 실패 알림 표시
                     Alert.alert('알림', '게시글 삭제에 실패했습니다.');
                   }
                 } catch (error) {
@@ -116,7 +105,6 @@ const DetailScreen = ({route}) => {
           {cancelable: true},
         );
       } else {
-        // 권한이 없을 경우 알림 표시
         Alert.alert('알림', '게시글을 삭제할 수 있는 권한이 없습니다.');
       }
     } catch (error) {
@@ -127,7 +115,6 @@ const DetailScreen = ({route}) => {
 
   const handleEdit = async () => {
     try {
-      // 해당 게시글이 현재 사용자의 것인지 확인하는 요청을 보냄
       const checkResponse = await axios.get(
         `http://ceprj.gachon.ac.kr:60020/board/${boardId}/check`,
         {
@@ -138,19 +125,16 @@ const DetailScreen = ({route}) => {
       );
 
       console.log('토큰 값:', storedToken);
-
-      console.log('서버 응답:', checkResponse.data); // 서버 응답을 콘솔에 출력
+      console.log('서버 응답:', checkResponse.data);
 
       if (checkResponse.data.success === 'True') {
-        // 서버에서 True를 반환한 경우에만 수정 화면으로 이동
         navigation.navigate('EditScreen', {
-          boardId, // 수정할 게시글의 boardId 전달
+          boardId,
           imageUrl: boardData.imgPath
             ? `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`
             : null,
         });
       } else {
-        // 서버에서 False를 반환한 경우에는 알림을 표시
         Alert.alert('알림', '게시글을 수정할 수 있는 권한이 없습니다.');
       }
     } catch (error) {
@@ -159,13 +143,13 @@ const DetailScreen = ({route}) => {
     }
   };
 
-  const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
+  const [boardData, setBoardData] = useState(null);
 
   const fetchBoard = async () => {
     try {
       const url = `http://ceprj.gachon.ac.kr:60020/board/${boardId}`;
       const response = await axios.get(url);
-      setBoardData(response.data.data); // 서버에서 받은 데이터를 boardData에 저장
+      setBoardData(response.data.data);
       console.log('서버에서 받은 데이터:', response.data);
     } catch (error) {
       console.error('데이터를 불러오는 중 오류 발생:', error);
@@ -176,15 +160,14 @@ const DetailScreen = ({route}) => {
     fetchBoard();
   }, [boardId]);
 
-  // DetailScreen 컴포넌트 내에서 useFocusEffect 추가
   useFocusEffect(
     React.useCallback(() => {
-      fetchBoard(); // 화면이 포커스를 받을 때마다 데이터 새로고침
-    }, [boardId]), // boardId가 변경될 때마다 실행
+      fetchBoard();
+    }, [boardId]),
   );
 
   const navigation = useNavigation();
-  const scrollViewRef = useRef(null); // ScrollView에 대한 ref 생성
+  const scrollViewRef = useRef(null);
 
   const navigateToPreviousScreen = () => {
     navigation.goBack();
@@ -206,7 +189,6 @@ const DetailScreen = ({route}) => {
 
   const handleCommentSubmit = async () => {
     if (storedToken === null) {
-      // 토큰값이 null인 경우 Alert를 띄웁니다.
       Alert.alert(
         '알림',
         '로그인한 회원만 댓글을 달 수 있습니다.',
@@ -217,46 +199,39 @@ const DetailScreen = ({route}) => {
       );
     } else {
       if (comment.trim() === '') {
-        // 입력된 댓글이 없는 경우
         Alert.alert('알림', '댓글을 입력해주세요!');
       } else {
         try {
           const response = await axios.post(
             `http://ceprj.gachon.ac.kr:60020/replies/${boardId}`,
-            {comment: comment}, // 댓글 내용을 서버로 전송
+            {comment: comment},
             {
               headers: {
-                Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+                Authorization: `Bearer ${storedToken}`,
               },
             },
           );
           if (response.data.success) {
-            // 서버에서 true를 반환한 경우
             Alert.alert('알림', '댓글 작성을 완료했습니다.');
             console.log(response.data);
-            // 서버로부터 반환된 댓글 데이터를 받아와 상태에 추가
-            const newComment = response.data.data; // 서버로부터 반환된 댓글 데이터
-            setComments(prevComments => [...prevComments, newComment]); // 상태에 새로운 댓글 추가
-
-            // 댓글을 추가한 후에 데이터를 다시 불러와서 화면을 업데이트
+            const newComment = response.data.data;
+            setComments(prevComments => [...prevComments, newComment]);
             fetchBoard();
           } else {
-            // 서버에서 false를 반환한 경우
             Alert.alert('알림', '댓글 작성에 실패했습니다.');
           }
         } catch (error) {
           console.error('댓글 작성 중 오류 발생:', error);
           Alert.alert('오류', '댓글 작성 중 오류가 발생했습니다.');
         }
-        setComment(''); // 댓글 입력 창 초기화
-        Keyboard.dismiss(); // 키보드 숨기기
+        setComment('');
+        Keyboard.dismiss();
       }
     }
   };
 
   const handleCommentOptions = async comment => {
     if (storedToken === null) {
-      // 토큰값이 null인 경우 Alert를 띄웁니다.
       Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
         cancelable: true,
       });
@@ -265,12 +240,10 @@ const DetailScreen = ({route}) => {
       console.log('댓글 정보:', comment);
 
       try {
-        // 헤더에 토큰값 추가
         const headers = {
-          Authorization: `Bearer ${storedToken}`, // 토큰값을 여기에 넣어주세요
+          Authorization: `Bearer ${storedToken}`,
         };
 
-        // replyUserCheck API를 호출하여 댓글 소유자인지 확인합니다.
         const response = await axios.get(
           `http://ceprj.gachon.ac.kr:60020/replies/${comment.replyId}/check`,
           {
@@ -279,7 +252,6 @@ const DetailScreen = ({route}) => {
         );
         const data = response.data;
 
-        // 댓글 소유자인 경우에만 수정 및 삭제 옵션을 제공합니다.
         if (data.success === 'True') {
           console.log(response.data);
           Alert.alert(
@@ -293,7 +265,7 @@ const DetailScreen = ({route}) => {
               {
                 text: '수정',
                 onPress: () => {
-                  openModal(comment.id, comment.comment, comment.replyId); // 여기에 필요한 인자 전달
+                  openModal(comment.id, comment.comment, comment.replyId);
                 },
               },
               {
@@ -320,12 +292,10 @@ const DetailScreen = ({route}) => {
             {cancelable: true},
           );
         } else {
-          // 댓글 소유자가 아닌 경우, 메시지를 표시합니다.
           Alert.alert('알림', '댓글을 수정하거나 삭제할 권한이 없습니다.');
         }
       } catch (error) {
-        // API 호출 중 오류가 발생한 경우, 알맞은 에러 처리를 해줍니다.
-        // 예를 들어, 네트워크 오류 등에 대한 메시지를 사용자에게 알려줄 수 있습니다.
+        console.error('댓글 옵션 처리 중 오류 발생:', error);
       }
     }
   };
@@ -333,38 +303,33 @@ const DetailScreen = ({route}) => {
   const openModal = (id, commentText, replyId) => {
     setEditCommentId(id);
     setEditCommentText(commentText);
-    setReplyId(replyId); // 모달 열 때 replyId 전달
+    setReplyId(replyId);
   };
 
   const editComment = comment => {
-    // 댓글 수정 로직 구현
     console.log('수정할 댓글:', comment);
-    // 여기에 수정 로직 추가
   };
 
   const deleteComment = replyId => {
     axios
       .delete(`http://ceprj.gachon.ac.kr:60020/replies/${replyId}`)
       .then(response => {
-        // 삭제 요청이 성공했을 때 실행할 코드
         fetchBoard();
-        console.log(response.data); // 서버로부터의 응답 데이터
-        // 여기에 추가적인 로직을 작성할 수 있습니다.
+        console.log(response.data);
       })
       .catch(error => {
-        // 삭제 요청이 실패했을 때 실행할 코드
         console.error('댓글 삭제 실패:', error);
       });
   };
+
   const scrollToBottom = () => {
-    // ScrollView의 스크롤을 최하단으로 이동
     scrollViewRef.current.scrollToEnd({animated: true});
   };
+
   const submitEditComment = async () => {
     if (!editCommentText.trim()) {
-      // trim()을 사용하여 빈 공백을 제거하고 댓글이 비어 있는지 확인합니다.
       Alert.alert('알림', '댓글을 입력해주세요!');
-      return; // 댓글이 비어 있으면 함수를 종료합니다.
+      return;
     }
     if (!replyId) {
       Alert.alert('오류', '댓글의 ID가 제공되지 않았습니다.');
@@ -394,9 +359,9 @@ const DetailScreen = ({route}) => {
       Alert.alert('오류', '댓글 수정 중 오류가 발생했습니다.');
     }
   };
+
   const handleRecommend = async () => {
     if (storedToken === null) {
-      // 토큰값이 null인 경우 Alert를 띄웁니다.
       Alert.alert('알림', '회원만 추천을 할 수 있습니다.', [{text: '확인'}], {
         cancelable: true,
       });
@@ -404,7 +369,7 @@ const DetailScreen = ({route}) => {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer ${storedToken}`, // 토큰을 Authorization 헤더에 포함
+            Authorization: `Bearer ${storedToken}`,
           },
         };
 
@@ -415,12 +380,9 @@ const DetailScreen = ({route}) => {
         );
 
         if (response.data.success) {
-          // 백엔드에서 true를 반환한 경우
           Alert.alert('알림', '감사합니다!');
-          // 추천 요청이 성공하면 화면을 다시 그림
           fetchBoard();
         } else {
-          // 백엔드에서 false를 반환한 경우
           Alert.alert('알림', '게시글 추천을 취소하셨습니다!');
         }
       } catch (error) {
@@ -429,6 +391,7 @@ const DetailScreen = ({route}) => {
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -456,7 +419,7 @@ const DetailScreen = ({route}) => {
       )}
 
       <ScrollView
-        ref={scrollViewRef} // ScrollView에 ref 연결
+        ref={scrollViewRef}
         style={styles.content}
         contentContainerStyle={{paddingBottom: 100}}>
         <KeyboardAvoidingView
@@ -464,12 +427,11 @@ const DetailScreen = ({route}) => {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -250}>
           <TextInput
             style={styles.input}
-            value={`작성자: ${boardData ? boardData.nickName : ''}`} // 작성자 이름을 표시
+            value={`작성자: ${boardData ? boardData.nickName : ''}`}
             autoCapitalize="none"
             placeholderTextColor="#0e0d0d"
             editable={false}
           />
-          {/* 시간까지 표시되도록 수정 */}
           <TextInput
             style={styles.input}
             value={`작성 시간: ${boardData ? boardData.postDate : ''}`}
@@ -489,7 +451,7 @@ const DetailScreen = ({route}) => {
           </TouchableOpacity>
           <TextInput
             style={styles.input}
-            value={`수리 비용: ${boardData ? boardData.cost : ''}`} // 작성자 이름을 표시
+            value={`수리 비용: ${boardData ? boardData.cost : ''}`}
             autoCapitalize="none"
             placeholderTextColor="#0e0d0d"
             editable={false}
@@ -537,7 +499,7 @@ const DetailScreen = ({route}) => {
         onChangeText={setComment}
         autoCapitalize="none"
         placeholderTextColor="#0a0a0a"
-        onFocus={scrollToBottom} // TextInput이 포커스를 받으면 화면 최하단으로 이동
+        onFocus={scrollToBottom}
       />
       <TouchableOpacity
         style={styles.commentButton}
@@ -599,7 +561,7 @@ const DetailScreen = ({route}) => {
               value={editCommentText}
             />
             <TouchableOpacity
-              style={{backgroundColor: '#4d91da', padding: 10, borderRadius: 5}}
+              style={{backgroundColor: '#3f51b5', padding: 10, borderRadius: 5}}
               onPress={submitEditComment}>
               <Text style={{color: '#fff', textAlign: 'center', fontSize: 18}}>
                 수정 완료
@@ -622,15 +584,17 @@ const DetailScreen = ({route}) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   navbar: {
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     marginBottom: 0,
   },
   navbarText: {
@@ -653,6 +617,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 10,
     color: 'black',
+    backgroundColor: '#ffffff',
   },
   content: {
     padding: 20,
@@ -670,9 +635,10 @@ const styles = StyleSheet.create({
     height: 150,
     textAlignVertical: 'top',
     paddingTop: 10,
+    backgroundColor: '#ffffff',
   },
   picture: {
-    width: 200,
+    width: 250,
     height: 200,
     resizeMode: 'cover',
     marginBottom: 20,
@@ -701,9 +667,10 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: 320,
     height: 52,
+    backgroundColor: '#ffffff',
   },
   commentButton: {
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     position: 'absolute',
     bottom: 20,
     right: 20,
@@ -734,12 +701,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginBottom: 10,
   },
-  // recommendButton 스타일 수정
   recommendButton: {
-    backgroundColor: '#4d91da',
+    backgroundColor: '#3f51b5',
     position: 'absolute',
     marginTop: 630,
-    alignSelf: 'center', // 가로 중앙 정렬
+    alignSelf: 'center',
     paddingVertical: 18,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -749,7 +715,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
   },
-  // 메뉴 스타일
   menu: {
     position: 'absolute',
     top: 50,
@@ -774,7 +739,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경색 및 투명도 조절
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     backgroundColor: 'white',
@@ -788,10 +753,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '100%', // 모달의 너비를 80%로 고정
+    width: '80%',
   },
   modalTextInput: {
-    width: '100%', // TextInput의 너비를 100%로 설정
+    width: '100%',
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
