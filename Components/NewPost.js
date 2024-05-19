@@ -171,7 +171,23 @@ const NewPost = () => {
           <TouchableOpacity
             style={styles.imageContainer}
             onPress={viewImageFullScreen}>
-            <Text style={styles.imageText}>첨부된 사진:</Text>
+            <Text style={styles.imageText}>자세한 손상 부위 사진:</Text>
+            {image && (
+              <Image
+                source={{uri: image.uri}}
+                style={[styles.previewImage, {alignSelf: 'center'}]}
+              />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleChoosePhoto}>
+            <Text style={styles.buttonText}>사진을 첨부하세요</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={viewImageFullScreen}>
+            <Text style={styles.imageText}>전체 차량 사진:</Text>
             {image && (
               <Image
                 source={{uri: image.uri}}

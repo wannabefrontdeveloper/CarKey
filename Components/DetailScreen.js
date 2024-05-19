@@ -439,16 +439,36 @@ const DetailScreen = ({route}) => {
             placeholderTextColor="#0e0d0d"
             editable={false}
           />
-          <TouchableOpacity onPress={viewImageFullScreen}>
-            {boardData && boardData.imgPath && (
-              <Image
-                source={{
-                  uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
-                }}
-                style={styles.picture}
-              />
-            )}
-          </TouchableOpacity>
+          <View style={styles.imageContainer}>
+            <View style={styles.imageContainer}>
+              <TouchableOpacity onPress={viewImageFullScreen}>
+                {boardData && boardData.imgPath && (
+                  <View style={styles.imageWrapper}>
+                    <Text style={styles.imageLabel}>손상부위 이미지</Text>
+                    <Image
+                      source={{
+                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
+                      }}
+                      style={styles.picture}
+                    />
+                  </View>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={viewImageFullScreen}>
+                {boardData && boardData.imgPath && (
+                  <View style={styles.imageWrapper}>
+                    <Text style={styles.imageLabel}>차량 전체 이미지</Text>
+                    <Image
+                      source={{
+                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
+                      }}
+                      style={styles.picture2}
+                    />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
           <TextInput
             style={styles.input}
             value={`수리 비용: ${boardData ? boardData.cost : ''}`}
@@ -590,6 +610,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  imageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // 추가: 이미지 컨테이너의 아래쪽 여백
+  },
+  imageWrapper: {
+    marginHorizontal: 10, // 이미지 사이의 간격 설정
+    alignItems: 'center', // 텍스트와 이미지를 중앙 정렬
+  },
   navbar: {
     height: 50,
     flexDirection: 'row',
@@ -638,10 +668,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   picture: {
-    width: 250,
-    height: 200,
+    width: 170,
+    height: 170,
     resizeMode: 'cover',
-    marginBottom: 20,
+    marginBottom: 10,
+    borderRadius: 8,
+    alignSelf: 'center',
+  },
+  picture2: {
+    width: 170,
+    height: 170,
+    resizeMode: 'cover',
+    marginBottom: 10,
     borderRadius: 8,
     alignSelf: 'center',
   },
@@ -661,7 +699,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 20,
-    marginTop: 80,
+    marginTop: 30,
   },
   commentInput: {
     marginBottom: 0,
@@ -703,12 +741,11 @@ const styles = StyleSheet.create({
   },
   recommendButton: {
     backgroundColor: '#3f51b5',
-    position: 'absolute',
-    marginTop: 630,
     alignSelf: 'center',
     paddingVertical: 18,
     paddingHorizontal: 20,
     borderRadius: 8,
+    marginTop: 20,
   },
   recommendButtonText: {
     color: '#fff',
@@ -762,6 +799,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  imageLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2c3e50', // 짙은 회색 텍스트
+    marginBottom: 10,
+    textAlign: 'center', // 텍스트 가운데 정렬
   },
 });
 

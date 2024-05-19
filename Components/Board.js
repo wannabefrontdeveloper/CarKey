@@ -208,8 +208,8 @@ const Board = () => {
       <View style={styles.navbar}>
         <TouchableOpacity
           style={styles.iconContainer}
-          onPress={navigateToSetting}>
-          <Icon name="settings" size={30} color="#ffffff" />
+          onPress={() => navigation.navigate('Menu')}>
+          <Icon name="arrow-back" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>게시판</Text>
         <TouchableOpacity
