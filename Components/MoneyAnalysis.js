@@ -22,7 +22,7 @@ const MoneyAnalysis = () => {
   const [isSaved, setIsSaved] = useState(false);
 
   const navigateToBoard = () => {
-    navigation.navigate('Menu');
+    navigation.navigate('Map');
   };
 
   const handleSaveAnalysis = () => {
@@ -83,9 +83,30 @@ const MoneyAnalysis = () => {
     }
   };
 
+  const handleMenuIconPress = () => {
+    Alert.alert(
+      '메뉴 화면으로 이동',
+      '메뉴 화면으로 이동하시겠어요?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Menu'),
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
+        <TouchableOpacity style={styles.menuIcon} onPress={handleMenuIconPress}>
+          <Icon name="home" size={30} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.navbarText}>수리비 분석 결과</Text>
       </View>
       <View style={styles.imageContainer}>
@@ -100,7 +121,7 @@ const MoneyAnalysis = () => {
         <Icon name="sentiment-very-satisfied" size={60} color="#3f51b5" />
         <View style={styles.balloon}>
           <Text style={styles.analysisText}>
-            예상 수리비는 {responseData.data.totalPrice}원 입니다!
+            수리비는 {responseData.data.totalPrice}원으로 예측됩니다!
           </Text>
         </View>
       </View>
@@ -112,7 +133,7 @@ const MoneyAnalysis = () => {
           <Text style={styles.buttonText}>분석 내역 저장하기</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button2} onPress={navigateToBoard}>
-          <Text style={styles.buttonText}>메뉴 화면으로 이동</Text>
+          <Text style={styles.buttonText}>주위 카센터 보기</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -178,7 +199,7 @@ const styles = StyleSheet.create({
   },
   analysisText: {
     marginLeft: 10,
-    fontSize: 23,
+    fontSize: 20,
     color: '#000',
   },
   balloon: {
@@ -229,6 +250,10 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: '#ccc',
+  },
+  menuIcon: {
+    position: 'absolute',
+    left: 10,
   },
 });
 

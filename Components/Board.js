@@ -22,8 +22,13 @@ const Board = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 관리할 상태(State) 추가
-  const itemsPerPage = 7; // 페이지당 항목 수
+  const itemsPerPage = 6; // 페이지당 항목 수
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
+  const [notice, setNotice] = useState({
+    title: '5월 19일 공지사항',
+    content: '클린한 게시판 이용 부탁드립니다.',
+    date: '2024-05-19', // 임의의 날짜 추가
+  });
   console.log('게시판에서의 토큰 값:', storedToken); // 토큰 값 콘솔 출력
 
   // 화면 포커스 시 데이터 새로고침
@@ -32,6 +37,11 @@ const Board = () => {
       fetchBoardData();
     }, []),
   );
+
+  useEffect(() => {
+    fetchBoardData();
+    fetchNoticeData(); // 공지사항 데이터 가져오기 함수 호출
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -77,7 +87,60 @@ const Board = () => {
     }
   };
 
+  const fetchNoticeData = async () => {
+    try {
+      console.log('Fetching notice data...');
+      const response = await axios.get(
+        'http://ceprj.gachon.ac.kr:60020/user/notice/first',
+      );
+      console.log('Notice data fetched successfully:', response.data);
+      const noticeData = response.data.data;
+      setNotice({
+        title: noticeData.title,
+        content: noticeData.comment,
+        date: noticeData.createdDate,
+      });
+    } catch (error) {
+      console.error('Error fetching notice data:', error);
+    }
+  };
+
   const items = [];
+
+  const Notice = ({title, content, date}) => {
+    const navigation = useNavigation();
+
+    // Date 객체로 변환
+    const parsedDate = new Date(date);
+
+    // 년, 월, 일, 시간, 분 정보 얻기
+    const year = parsedDate.getFullYear();
+    const month = String(parsedDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더하고 두 자리 숫자로 포맷팅
+    const day = String(parsedDate.getDate()).padStart(2, '0');
+    const hours = String(parsedDate.getHours()).padStart(2, '0');
+    const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
+
+    // 날짜와 시간을 문자열로 조합하여 포맷팅
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    const navigateToAnnouncement = () => {
+      navigation.navigate('Announcement', {
+        title,
+        content,
+        date: formattedDate,
+      });
+    };
+
+    return (
+      <TouchableOpacity onPress={navigateToAnnouncement}>
+        <View style={styles.noticeContainer}>
+          <Text style={styles.noticeTitle}>📢 {title}</Text>
+          <Text style={styles.noticeContent}>{content}</Text>
+          <Text style={styles.noticeDate}>{formattedDate}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   // 현재 페이지에 해당하는 항목들만 가져오는 함수 수정
   const getItemsForCurrentPage = () => {
@@ -218,6 +281,11 @@ const Board = () => {
           <Icon name="create" size={30} color="#ffffff" />
         </TouchableOpacity>
       </View>
+      <Notice
+        title={notice.title}
+        content={notice.content}
+        date={notice.date}
+      />
       <FlatList
         data={getItemsForCurrentPage()} // 현재 페이지에 맞는 데이터만 렌더링
         renderItem={({item}) => (
@@ -326,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3f51b5', // 인망블루 페이지 버튼
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 7,
+    marginBottom: 15,
   },
   currentPageButton: {
     backgroundColor: '#283593', // 더 짙은 인망블루 현재 페이지 버튼
@@ -345,6 +413,35 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
+  },
+  noticeContainer: {
+    padding: 5,
+    backgroundColor: '#d4e67b', // 밝은 노란색 배경
+    marginHorizontal: 10,
+    borderRadius: 10,
+    marginVertical: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  noticeTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2c3e50', // 짙은 회색 제목
+    flexDirection: 'row', // 아이콘과 텍스트를 한 줄로 정렬
+    alignItems: 'center', // 아이템을 수직 가운데 정렬
+    marginBottom: 5,
+  },
+  noticeContent: {
+    fontSize: 15,
+    color: 'black', // 중간 회색 내용
+  },
+  noticeDate: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    marginTop: 5,
+    textAlign: 'right',
   },
 });
 

@@ -15,24 +15,29 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
 import {useToken} from './TokenContext';
 import axios from 'axios';
-import {useImage} from './ImageContext';
 
 const EditScreen = ({route}) => {
   // route에서 params를 받아옴
-  const {boardId, imageUrl} = route.params; // route.params에서 boardId와 imageUrl를 추출
+  const {boardId, closerImageUrl, entireImageUrl} = route.params; // route.params에서 boardId, closerImageUrl, entireImageUrl를 추출
   console.log('boardId:', boardId);
-  console.log('imageUrl:', imageUrl); // imageUrl 확인용
+  console.log('closerImageUrl:', closerImageUrl); // closerImageUrl 확인용
+  console.log('entireImageUrl:', entireImageUrl); // entireImageUrl 확인용
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(imageUrl ? {uri: imageUrl} : null); // 초기 이미지 상태 설정
+  const [image1, setImage1] = useState(
+    closerImageUrl ? {uri: closerImageUrl} : null,
+  ); // 초기 이미지 상태 설정
+  const [image2, setImage2] = useState(
+    entireImageUrl ? {uri: entireImageUrl} : null,
+  ); // 초기 이미지 상태 설정
   const [repairCost, setRepairCost] = useState('');
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
   const [boardData, setBoardData] = useState(null); // 서버에서 받은 게시판 데이터를 저장할 상태
-  const [imageUri, setImageUri] = useState(imageUrl); // imageUrl 상태 추가
   const [boardTitle, setBoardTitle] = useState('');
   const [boardContent, setBoardContent] = useState('');
   const [boardRepairCost, setBoardRepairCost] = useState('');
+
   const fetchBoard = async () => {
     try {
       const url = `http://ceprj.gachon.ac.kr:60020/board/${boardId}`;
@@ -57,11 +62,11 @@ const EditScreen = ({route}) => {
     fetchBoard();
   }, [boardId]);
 
-  const handleChoosePhoto = () => {
+  const handleChoosePhoto = setImage => {
     // 사진을 첨부하기 전에 Alert를 표시
     Alert.alert(
       '알림',
-      '사고 부위가 잘 나온 사진으로 첨부해주세요!',
+      '사고 부위가 확대된 사진으로 첨부해주세요!',
       [
         {text: '취소', onPress: () => console.log('사진 첨부 취소')},
         {
@@ -69,14 +74,32 @@ const EditScreen = ({route}) => {
           onPress: () =>
             launchImageLibrary({noData: true}, response => {
               console.log('Response:', response);
-              if (
-                !response.didCancel &&
-                response.assets &&
-                response.assets.length > 0
-              ) {
+              if (response.assets && response.assets.length > 0) {
                 const selectedImage = response.assets[0];
-                console.log('Selected Image Name:', selectedImage.fileName); // 새로운 이미지 파일 이름 콘솔에 출력
-                setImage({uri: selectedImage.uri});
+                setImage(selectedImage);
+              }
+            }),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const handleChoosePhoto2 = setImage => {
+    // 사진을 첨부하기 전에 Alert를 표시
+    Alert.alert(
+      '알림',
+      '차량이 손상부위와 함께 전체적으로 나온 사진을 올려주세요!',
+      [
+        {text: '취소', onPress: () => console.log('사진 첨부 취소')},
+        {
+          text: '확인',
+          onPress: () =>
+            launchImageLibrary({noData: true}, response => {
+              console.log('Response:', response);
+              if (response.assets && response.assets.length > 0) {
+                const selectedImage = response.assets[0];
+                setImage(selectedImage);
               }
             }),
         },
@@ -86,7 +109,7 @@ const EditScreen = ({route}) => {
   };
 
   const navigateToBoard = () => {
-    if (title || content || image || repairCost) {
+    if (title || content || image1 || image2 || repairCost) {
       // 작성 중인 내용이 있을 경우에만 Alert 표시
       Alert.alert(
         '작성 중인 내용이 있습니다.',
@@ -102,9 +125,9 @@ const EditScreen = ({route}) => {
     }
   };
 
-  const viewImageFullScreen = () => {
-    if (image) {
-      navigation.navigate('ImageFullScreen', {imageUri: image.uri});
+  const viewImageFullScreen = imageUri => {
+    if (imageUri) {
+      navigation.navigate('ImageFullScreen', {imageUri: imageUri});
     }
   };
 
@@ -123,7 +146,7 @@ const EditScreen = ({route}) => {
           onPress: async () => {
             try {
               // 수정 요청을 서버에 보냄
-              if (!image) {
+              if (!image1 || !image2) {
                 Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
                 return;
               }
@@ -141,11 +164,16 @@ const EditScreen = ({route}) => {
                 }),
               );
               formData.append('image', {
-                uri: image.uri,
-                name: 'image.jpg', // 임의의 이미지 파일 이름
-                type: 'image/jpeg', // 이미지 타입에 따라 수정 필요
+                uri: image1.uri,
+                name: image1.fileName,
+                type: image1.type,
               });
 
+              formData.append('image', {
+                uri: image2.uri,
+                name: image2.fileName,
+                type: image2.type,
+              });
               console.log('보낼 데이터:', formData); // 데이터 확인용 로그
 
               const response = await axios.put(
@@ -171,10 +199,6 @@ const EditScreen = ({route}) => {
       {cancelable: false},
     );
   };
-  useEffect(() => {
-    // imageUrl이 변경될 때마다 imageUri 업데이트
-    setImageUri(imageUrl);
-  }, [imageUrl]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -213,20 +237,42 @@ const EditScreen = ({route}) => {
             }}
           />
 
-          <TouchableOpacity style={styles.button} onPress={handleChoosePhoto}>
-            <Text style={styles.buttonText}>사진을 첨부하세요</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleChoosePhoto(setImage1)}>
+            <Text style={styles.buttonText}>
+              자세한 손상 부위 사진을 첨부하세요
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.imageContainer}
-            onPress={handleChoosePhoto}>
-            <Text style={styles.imageText}>첨부된 사진:</Text>
+            onPress={() => viewImageFullScreen(image1?.uri)}>
+            <Text style={styles.imageText}>자세한 손상 부위 사진:</Text>
+            {image1 && (
+              <Image
+                source={{uri: image1.uri}}
+                style={[styles.previewImage, {alignSelf: 'center'}]}
+              />
+            )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={viewImageFullScreen}>
-            <Image
-              source={image}
-              style={[styles.previewImage, {alignSelf: 'center'}]}
-            />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleChoosePhoto2(setImage2)}>
+            <Text style={styles.buttonText}>전체 차량 사진을 첨부하세요</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={() => viewImageFullScreen(image2?.uri)}>
+            <Text style={styles.imageText}>전체 차량 사진:</Text>
+            {image2 && (
+              <Image
+                source={{uri: image2.uri}}
+                style={[styles.previewImage, {alignSelf: 'center'}]}
+              />
+            )}
           </TouchableOpacity>
           <View style={styles.repairCostContainer}>
             <TextInput

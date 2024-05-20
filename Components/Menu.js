@@ -18,16 +18,23 @@ const Menu = ({navigation}) => {
     },
     {
       key: '4',
-      title: '내 분석 내역 조회',
+      title: '분석 내역 조회',
       icon: 'history',
       screen: 'DamageReportViewer',
     },
+    {
+      key: '5',
+      title: '주위 카센터',
+      icon: 'location-on',
+      screen: 'Map',
+    },
+    {key: '6', title: '설정', icon: 'settings', screen: 'Setting'},
   ];
 
   const handlePress = item => {
     if (storedToken === null) {
-      if (item.key !== '1' && item.key !== '3') {
-        // 토큰값이 null이고 메뉴가 게시판이나 수리비 예측하기가 아닌 경우
+      if (item.key !== '1' && item.key !== '3' && item.key !== '5') {
+        // 토큰값이 null이고 메뉴가 게시판, 수리비 예측하기 또는 주위 카센터 보기가 아닌 경우
         Alert.alert('알림', '회원만 가능한 메뉴입니다.', [{text: '확인'}], {
           cancelable: true,
         });

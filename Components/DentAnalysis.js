@@ -14,7 +14,7 @@ const DentAnalysis = () => {
   };
 
   const navigateToMoneyAnalysis = () => {
-    navigation.navigate('MoneyAnalysis');
+    navigation.navigate('Graph');
   };
 
   return (
@@ -49,7 +49,7 @@ const DentAnalysis = () => {
         <TouchableOpacity
           style={styles.button2}
           onPress={navigateToMoneyAnalysis}>
-          <Text style={styles.buttonText}>예상 수리비 보기</Text>
+          <Text style={styles.buttonText}>가격 상세 분석 보기</Text>
         </TouchableOpacity>
       </View>
     </View>

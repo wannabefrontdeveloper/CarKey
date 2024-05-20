@@ -31,6 +31,9 @@ import EditScreen from './Components/EditScreen';
 import {ResponseProvider} from './Components//ResponseContext';
 import {ImageProvider} from './Components/ImageContext';
 import Menu from './Components/Menu';
+import Announcement from './Components/Announcement';
+import Graph from './Components/Graph';
+import Map from './Components/Map';
 
 const Stack = createNativeStackNavigator();
 
@@ -171,6 +174,21 @@ const App = () => {
                 <Stack.Screen
                   name="Menu"
                   component={Menu}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="Announcement"
+                  component={Announcement}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="Graph"
+                  component={Graph}
+                  options={{headerShown: false}}
+                />
+                <Stack.Screen
+                  name="Map"
+                  component={Map}
                   options={{headerShown: false}}
                 />
               </Stack.Navigator>

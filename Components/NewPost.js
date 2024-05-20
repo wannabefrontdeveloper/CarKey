@@ -20,15 +20,39 @@ const NewPost = () => {
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
   const [repairCost, setRepairCost] = useState('');
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
 
-  const handleChoosePhoto = () => {
+  const handleChoosePhoto = setImage => {
     // 사진을 첨부하기 전에 Alert를 표시
     Alert.alert(
       '알림',
-      '사고 부위가 잘 나온 사진으로 첨부해주세요!',
+      '사고 부위가 확대된 사진으로 첨부해주세요!',
+      [
+        {text: '취소', onPress: () => console.log('사진 첨부 취소')},
+        {
+          text: '확인',
+          onPress: () =>
+            launchImageLibrary({noData: true}, response => {
+              console.log('Response:', response);
+              if (response.assets && response.assets.length > 0) {
+                const selectedImage = response.assets[0];
+                setImage(selectedImage);
+              }
+            }),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const handleChoosePhoto2 = setImage => {
+    // 사진을 첨부하기 전에 Alert를 표시
+    Alert.alert(
+      '알림',
+      '차량이 손상부위와 함께 전체적으로 나온 사진을 올려주세요!',
       [
         {text: '취소', onPress: () => console.log('사진 첨부 취소')},
         {
@@ -48,7 +72,7 @@ const NewPost = () => {
   };
 
   const navigateToBoard = () => {
-    if (title || content || image || repairCost) {
+    if (title || content || image1 || image2 || repairCost) {
       // 작성 중인 내용이 있을 경우에만 Alert 표시
       Alert.alert(
         '작성 중인 내용이 있습니다.',
@@ -64,14 +88,14 @@ const NewPost = () => {
     }
   };
 
-  const viewImageFullScreen = () => {
-    if (image) {
-      navigation.navigate('ImageFullScreen', {imageUri: image.uri});
+  const viewImageFullScreen = imageUri => {
+    if (imageUri) {
+      navigation.navigate('ImageFullScreen', {imageUri});
     }
   };
 
   const handleSubmit = async () => {
-    if (!title || !image || !repairCost || !content) {
+    if (!title || !image1 || !image2 || !repairCost || !content) {
       Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
       return;
     }
@@ -89,10 +113,17 @@ const NewPost = () => {
 
       // 이미지 데이터 추가
       formData.append('image', {
-        uri: image.uri,
-        name: image.fileName,
-        type: image.type,
+        uri: image1.uri,
+        name: image1.fileName,
+        type: image1.type,
       });
+
+      formData.append('image', {
+        uri: image2.uri,
+        name: image2.fileName,
+        type: image2.type,
+      });
+
       console.log(formData);
 
       const response = await axios.post(
@@ -164,33 +195,39 @@ const NewPost = () => {
             }}
           />
 
-          <TouchableOpacity style={styles.button} onPress={handleChoosePhoto}>
-            <Text style={styles.buttonText}>사진을 첨부하세요</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleChoosePhoto(setImage1)}>
+            <Text style={styles.buttonText}>
+              자세한 손상 부위 사진을 첨부하세요
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.imageContainer}
-            onPress={viewImageFullScreen}>
+            onPress={() => viewImageFullScreen(image1?.uri)}>
             <Text style={styles.imageText}>자세한 손상 부위 사진:</Text>
-            {image && (
+            {image1 && (
               <Image
-                source={{uri: image.uri}}
+                source={{uri: image1.uri}}
                 style={[styles.previewImage, {alignSelf: 'center'}]}
               />
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={handleChoosePhoto}>
-            <Text style={styles.buttonText}>사진을 첨부하세요</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleChoosePhoto2(setImage2)}>
+            <Text style={styles.buttonText}>전체 차량 사진을 첨부하세요</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.imageContainer}
-            onPress={viewImageFullScreen}>
+            onPress={() => viewImageFullScreen(image2?.uri)}>
             <Text style={styles.imageText}>전체 차량 사진:</Text>
-            {image && (
+            {image2 && (
               <Image
-                source={{uri: image.uri}}
+                source={{uri: image2.uri}}
                 style={[styles.previewImage, {alignSelf: 'center'}]}
               />
             )}

@@ -27,14 +27,19 @@ const DetailScreen = ({route}) => {
   const {storedToken} = useToken();
   const [isLoadingImage, setIsLoadingImage] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {setImageUri} = useImage();
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentText, setEditCommentText] = useState('');
   const [replyId, setReplyId] = useState(null);
+  const {imageUri, setImageUri} = useImage(); // useImage 훅에서 imageUri 상태를 가져옴
 
   useEffect(() => {
-    setImageUri(boardData?.imgPath);
+    if (boardData) {
+      setImageUri({
+        closerImage: boardData.closerImageName,
+        entireImage: boardData.entireImageName,
+      });
+    }
   }, [boardData]);
 
   const toggleMenu = () => {
@@ -130,8 +135,11 @@ const DetailScreen = ({route}) => {
       if (checkResponse.data.success === 'True') {
         navigation.navigate('EditScreen', {
           boardId,
-          imageUrl: boardData.imgPath
-            ? `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`
+          closerImageUrl: boardData.closerImageName
+            ? `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.closerImageName}`
+            : null,
+          entireImageUrl: boardData.entireImageName
+            ? `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.entireImageName}`
             : null,
         });
       } else {
@@ -183,8 +191,11 @@ const DetailScreen = ({route}) => {
     }
   }, [boardData]);
 
-  const viewImageFullScreen = () => {
+  const viewImageFullScreen = imageName => {
     setModalVisible(true);
+    setImageUri({
+      uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${imageName}`,
+    });
   };
 
   const handleCommentSubmit = async () => {
@@ -441,26 +452,28 @@ const DetailScreen = ({route}) => {
           />
           <View style={styles.imageContainer}>
             <View style={styles.imageContainer}>
-              <TouchableOpacity onPress={viewImageFullScreen}>
-                {boardData && boardData.imgPath && (
+              <TouchableOpacity
+                onPress={() => viewImageFullScreen(boardData.closerImageName)}>
+                {boardData && boardData.closerImageName && (
                   <View style={styles.imageWrapper}>
                     <Text style={styles.imageLabel}>손상부위 이미지</Text>
                     <Image
                       source={{
-                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
+                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.closerImageName}`,
                       }}
                       style={styles.picture}
                     />
                   </View>
                 )}
               </TouchableOpacity>
-              <TouchableOpacity onPress={viewImageFullScreen}>
-                {boardData && boardData.imgPath && (
+              <TouchableOpacity
+                onPress={() => viewImageFullScreen(boardData.entireImageName)}>
+                {boardData && boardData.entireImageName && (
                   <View style={styles.imageWrapper}>
                     <Text style={styles.imageLabel}>차량 전체 이미지</Text>
                     <Image
                       source={{
-                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
+                        uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.entireImageName}`,
                       }}
                       style={styles.picture2}
                     />
@@ -532,10 +545,10 @@ const DetailScreen = ({route}) => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-            {boardData && boardData.imgPath ? (
+            {imageUri && imageUri.uri ? (
               <Image
                 source={{
-                  uri: `http://ceprj.gachon.ac.kr:60020/image/boardImages/${boardData.imgPath}`,
+                  uri: imageUri.uri,
                 }}
                 style={styles.modalImage}
               />
