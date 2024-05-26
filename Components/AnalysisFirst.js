@@ -53,7 +53,7 @@ const AnalysisFirst = ({route}) => {
           [
             {
               text: '홈으로 이동',
-              onPress: () => navigation.navigate('Board'),
+              onPress: () => navigation.navigate('Menu'),
               style: 'cancel',
             },
             {
@@ -66,9 +66,7 @@ const AnalysisFirst = ({route}) => {
       } else {
         updateResponseData(response.data);
       }
-    } catch (error) {
-      console.error('Error during analysis:', error);
-    }
+    } catch (error) {}
   };
 
   const navigateToCameraScreen = () => {

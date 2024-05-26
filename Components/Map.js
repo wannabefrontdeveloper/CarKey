@@ -1,18 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  PermissionsAndroid,
-  Platform,
   TouchableOpacity,
+  Platform,
+  PermissionsAndroid,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {WebView} from 'react-native-webview';
 import Geolocation from 'react-native-geolocation-service';
 
-const Map = () => {
-  const navigation = useNavigation();
+const MyComponent = ({navigation}) => {
   const [currentPosition, setCurrentPosition] = useState(null);
 
   useEffect(() => {
@@ -46,7 +44,7 @@ const Map = () => {
       Geolocation.getCurrentPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          console.log('현재 위치:', latitude, longitude); // 위치 정보 콘솔에 출력
+          console.log('현재 위치:', latitude, longitude);
           setCurrentPosition({lat: latitude, lng: longitude});
         },
         error => {
@@ -61,63 +59,137 @@ const Map = () => {
 
   const html = currentPosition
     ? `
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fdcb399d7134dcaf0208cb8a0eb587a9&libraries=services"></script>
-      </head>
-      <body>
-        <div id="map" style="width:100%;height:100%;"></div>
-        <script type="text/javascript">
-          (function () {
-            const container = document.getElementById('map');
-            const options = {
-              center: new kakao.maps.LatLng(${currentPosition.lat}, ${currentPosition.lng}),
-              level: 3
-            };
-            const map = new kakao.maps.Map(container, options);
-            
-            // 현재 위치에 빨간색 마커 추가
-            const currentMarker = new kakao.maps.Marker({
-              map: map,
-              position: new kakao.maps.LatLng(${currentPosition.lat}, ${currentPosition.lng}),
-              title: '현재 위치',
-              image: new kakao.maps.MarkerImage(
-                'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
-                new kakao.maps.Size(44, 49),
-                {offset: new kakao.maps.Point(27, 69)}
-              )
-            });
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .infowindow-content {
+        padding: 5px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .infowindow-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+      .infowindow-phone {
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" style="width:100%;height:100%;"></div>
+    <script type="text/javascript">
+      function loadScript(url, callback) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+        script.onload = callback;
+        script.onerror = function() {
+          console.error('Failed to load script:', url);
+        };
+        document.head.appendChild(script);
+      }
 
-            const ps = new kakao.maps.services.Places(map);
-            ps.keywordSearch('자동차 정비소', placesSearchCB, {location: new kakao.maps.LatLng(${currentPosition.lat}, ${currentPosition.lng})});
+      loadScript("https://dapi.kakao.com/v2/maps/sdk.js?appkey=6b124de30e330a89fffdbab91f49f0ba&libraries=services&autoload=false", function() {
+        new Promise(function(resolve) {
+          kakao.maps.load(resolve);
+        }).then(function() {
+          var mapContainer = document.getElementById('map');
+          var mapOption = {
+            center: new kakao.maps.LatLng(${currentPosition.lat}, ${currentPosition.lng}),
+            level: 4
+          };
 
-            function placesSearchCB(data, status, pagination) {
-              if (status === kakao.maps.services.Status.OK) {
-                for (let i = 0; i < data.length; i++) {
-                  displayMarker(data[i]);
-                }
-              }
+          var map = new kakao.maps.Map(mapContainer, mapOption);
+
+          var currentMarker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(${currentPosition.lat}, ${currentPosition.lng}),
+            title: '현재 위치',
+            image: new kakao.maps.MarkerImage(
+              'https://img.icons8.com/ios-filled/50/f10909/marker.png', // 파란색 점 아이콘
+              new kakao.maps.Size(33, 33),
+              { offset: new kakao.maps.Point(22, 49) }
+            )
+          });
+
+          var currentInfowindow = null;
+
+          fetch('https://dapi.kakao.com/v2/local/search/keyword.json?query=자동차 정비소&x=${currentPosition.lng}&y=${currentPosition.lat}&radius=5000', {
+            headers: {
+              Authorization: 'KakaoAK 6b124de30e330a89fffdbab91f49f0ba',
+              'KA': 'sdk/1.0.0 os/javascript origin/http://ceprj.gachon.ac.kr'
             }
-
-            function displayMarker(place) {
-              const marker = new kakao.maps.Marker({
-                map: map,
-                position: new kakao.maps.LatLng(place.y, place.x)
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Places search result:', JSON.stringify(data, null, 2));
+            if (data.documents && data.documents.length > 0) {
+              data.documents.forEach(place => {
+                var marker = new kakao.maps.Marker({
+                  map: map,
+                  position: new kakao.maps.LatLng(place.y, place.x),
+                  title: place.place_name
+                });
+                var infowindow = new kakao.maps.InfoWindow({
+                  content: '<div class="infowindow-content">' +
+                           '<div class="infowindow-title">' + place.place_name + '</div>' +
+                           '<div class="infowindow-phone">전화번호: ' + (place.phone || '정보 없음') + '</div>' +
+                           '</div>'
+                });
+                kakao.maps.event.addListener(marker, 'click', function() {
+                  if (currentInfowindow) {
+                    currentInfowindow.close();
+                    if (currentInfowindow === infowindow) {
+                      currentInfowindow = null;
+                      return;
+                    }
+                  }
+                  infowindow.open(map, marker);
+                  currentInfowindow = infowindow;
+                });
               });
-
-              kakao.maps.event.addListener(marker, 'click', function() {
-                const infowindow = new kakao.maps.InfoWindow({zIndex:1});
-                infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-                infowindow.open(map, marker);
-              });
+            } else {
+              console.log('Places search failed with status:', JSON.stringify(data, null, 2));
             }
-          })();
-        </script>
-      </body>
-    </html>
-  `
-    : '<div>위치 정보를 가져오는 중…</div>';
+          })
+          .catch(error => {
+            console.log('Fetch error:', error);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+`
+    : `
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+      .loading {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading">
+      <p>위치 정보를 가져오는 중…</p>
+    </div>
+  </body>
+</html>
+`;
 
   return (
     <View style={styles.container}>
@@ -130,6 +202,9 @@ const Map = () => {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         originWhitelist={['*']}
+        onMessage={event => {
+          console.log('웹뷰에서 받은 메시지:', event.nativeEvent.data);
+        }}
       />
       <View style={styles.buttonContainer}>
         <TouchableOpacity
@@ -174,20 +249,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#3f51b5',
     padding: 15,
-    borderRadius: 10,
-    justifyContent: 'center',
+    borderRadius: 5,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 18,
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
 
-export default Map;
+export default MyComponent;

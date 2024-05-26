@@ -181,8 +181,8 @@ const NewPost = () => {
             placeholder="제목을 입력하세요 (최대 15글자)"
             value={title}
             onChangeText={text => {
-              // 입력된 텍스트에서 공백을 제거하고 15글자까지 자르기
-              const trimmedText = text.trim().substring(0, 15);
+              // 입력된 텍스트에서 15글자까지 자르기 (공백 허용)
+              const trimmedText = text.substring(0, 15);
               if (trimmedText.length > 15) {
                 // 제목이 15글자를 초과하는 경우 Alert를 띄워주기
                 Alert.alert(

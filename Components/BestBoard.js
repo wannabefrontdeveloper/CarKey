@@ -22,12 +22,17 @@ const BestBoard = () => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 관리할 상태(State) 추가
   const itemsPerPage = 6; // 페이지당 항목 수
   const {storedToken} = useToken(); // TokenContext에서 토큰 가져오기
-  const [notice, setNotice] = useState(null);
+  const [notice, setNotice] = useState({
+    title: '5월 19일 공지사항',
+    content: '클린한 게시판 이용 부탁드립니다.',
+    date: '2024-05-19', // 임의의 날짜 추가
+  });
 
   // 화면 포커스 시 데이터 새로고침
   useFocusEffect(
     React.useCallback(() => {
       fetchBoardData();
+      fetchNoticeData();
     }, []),
   );
 
@@ -166,7 +171,7 @@ const BestBoard = () => {
   };
 
   const navigateToSetting = () => {
-    navigation.navigate('Setting');
+    navigation.navigate('Board');
   };
 
   const navigateToBoard = () => {
@@ -261,7 +266,7 @@ const BestBoard = () => {
         <TouchableOpacity
           style={styles.iconContainer}
           onPress={navigateToSetting}>
-          <Icon name="settings" size={30} color="#ffffff" />
+          <Icon name="arrow-back" size={30} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.navbarText}>베스트 게시판</Text>
         <TouchableOpacity
@@ -288,7 +293,13 @@ const BestBoard = () => {
         )}
         keyExtractor={item => item.boardId.toString()}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchBoardData} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              fetchBoardData();
+              fetchNoticeData();
+            }}
+          />
         }
       />
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>

@@ -35,6 +35,7 @@ const Board = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchBoardData();
+      fetchNoticeData();
     }, []),
   );
 
@@ -299,7 +300,13 @@ const Board = () => {
         )}
         keyExtractor={item => item.boardId.toString()}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchBoardData} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              fetchBoardData();
+              fetchNoticeData();
+            }}
+          />
         }
       />
       <View style={styles.pageButtonsContainer}>{renderPageButtons()}</View>
