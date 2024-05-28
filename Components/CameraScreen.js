@@ -144,7 +144,8 @@ const CameraScreen = ({navigation}) => {
       <View style={styles.yellowFrame}>
         <View style={styles.yellowFrameBorder} />
         <Text style={styles.instructionText}>
-          테두리 안에 손상부위를 촬영해주세요!
+          차량이 보이도록 차량의 손상 부위로부터{'\n'}
+          세발자국 뒤로가서 촬영해주세요
         </Text>
       </View>
       <View style={styles.tabBar}>
@@ -191,8 +192,8 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     position: 'absolute',
-    top: '50%',
-    left: '50%',
+    top: '40%',
+    left: '45%',
     textAlign: 'center',
     color: 'white',
     fontSize: 20,

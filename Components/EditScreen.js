@@ -145,11 +145,9 @@ const EditScreen = ({route}) => {
           text: '확인',
           onPress: async () => {
             try {
-              // 수정 요청을 서버에 보냄
-              if (!image1 || !image2) {
-                Alert.alert('입력 필요', '모든 항목을 입력해주세요.');
-                return;
-              }
+              // 이미지가 선택되지 않았을 때 기존 이미지를 사용
+              const selectedImage1 = image1 ? image1 : {uri: closerImageUrl};
+              const selectedImage2 = image2 ? image2 : {uri: entireImageUrl};
 
               // 쉼표(,)를 제거한 수리비 값
               const cleanedRepairCost = boardRepairCost.replace(/,/g, '');
@@ -163,17 +161,25 @@ const EditScreen = ({route}) => {
                   comment: boardContent,
                 }),
               );
-              formData.append('image', {
-                uri: image1.uri,
-                name: image1.fileName,
-                type: image1.type,
-              });
 
-              formData.append('image', {
-                uri: image2.uri,
-                name: image2.fileName,
-                type: image2.type,
-              });
+              // 첫 번째 이미지가 있는 경우 추가
+              if (selectedImage1.uri) {
+                formData.append('image', {
+                  uri: selectedImage1.uri,
+                  name: selectedImage1.fileName || 'closerImage.jpg',
+                  type: selectedImage1.type || 'image/jpeg',
+                });
+              }
+
+              // 두 번째 이미지가 있는 경우 추가
+              if (selectedImage2.uri) {
+                formData.append('image', {
+                  uri: selectedImage2.uri,
+                  name: selectedImage2.fileName || 'entireImage.jpg',
+                  type: selectedImage2.type || 'image/jpeg',
+                });
+              }
+
               console.log('보낼 데이터:', formData); // 데이터 확인용 로그
 
               const response = await axios.put(
