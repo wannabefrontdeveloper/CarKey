@@ -125,6 +125,11 @@ const MoneyAnalysis = () => {
           </Text>
         </View>
       </View>
+      <View style={styles.disclaimerContainer}>
+        <Text style={styles.disclaimerText}>
+          ※ 실제 수리비는 10만원 정도 차이가 날 수 있습니다.
+        </Text>
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, isSaved && styles.disabledButton]}
@@ -254,6 +259,15 @@ const styles = StyleSheet.create({
   menuIcon: {
     position: 'absolute',
     left: 10,
+  },
+  disclaimerContainer: {
+    marginVertical: 0,
+    paddingHorizontal: 20,
+  },
+  disclaimerText: {
+    fontSize: 16,
+    color: '#bdb9b9',
+    textAlign: 'center',
   },
 });
 
